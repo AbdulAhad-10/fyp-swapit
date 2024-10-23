@@ -19,6 +19,13 @@ import { cn } from "@/lib/utils";
 import { Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Source_Sans_3 } from "next/font/google";
+
+const sourceSans = Source_Sans_3({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  display: "swap",
+});
 
 const sidebarLinks = [
   {
@@ -69,7 +76,14 @@ const MobileNav = () => {
         </SheetTrigger>
         <SheetContent side="left" className="border-none bg-white">
           <div className="flex h-[calc(100vh-72px)] flex-col justify-between overflow-y-auto">
-            <section className="flex flex-col h-full gap-6 pt-16">
+            <Link
+              href={"/"}
+              className={`${sourceSans.className} flex items-center gap-1 justify-center border-b pb-4`}
+            >
+              <p className="text-3xl font-extrabold  text-blue-1">swapit</p>
+            </Link>
+
+            <section className="flex flex-col h-full gap-3 pt-5">
               {sidebarLinks.map((link) => {
                 const isActive = pathname === link.route;
                 return (
