@@ -21,7 +21,7 @@ const sidebarLinks = [
   },
   {
     label: "Explore Skills",
-    route: "/exlore-skills",
+    route: "/explore-skills",
     icon: <Search className="mr-2" size={20} />,
   },
   {
