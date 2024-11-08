@@ -1,5 +1,11 @@
+import Listings from "@/components/exploreSkills/Listings";
+
 const ExploreSkillsPage = () => {
-  return <div>ExploreSkillsPage</div>;
+  return (
+    <section>
+      <Listings />
+    </section>
+  );
 };
 
 export default ExploreSkillsPage;
