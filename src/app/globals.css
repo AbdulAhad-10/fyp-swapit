@@ -7,6 +7,12 @@ body {
 }
 
 @layer utilities {
+  .primary-btn {
+    @apply bg-blue-1 text-white rounded-xl;
+  }
+  .secondary-btn {
+    @apply bg-sky-1 text-blue-1 rounded-xl;
+  }
   .flex-center {
     @apply flex justify-center items-center;
   }

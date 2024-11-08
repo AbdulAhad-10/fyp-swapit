@@ -7,6 +7,7 @@ import {
   FileVideo2Icon,
   LayoutDashboard,
   LucideCalendarCheck,
+  MessageSquare,
   Search,
   User,
 } from "lucide-react";
@@ -33,6 +34,11 @@ const sidebarLinks = [
     label: "My Listings",
     route: "/my-listings",
     icon: <BookOpen className="mr-2" size={20} />,
+  },
+  {
+    label: "Requests",
+    route: "/requests",
+    icon: <MessageSquare className="mr-2" size={20} />,
   },
   {
     label: "Previous",
