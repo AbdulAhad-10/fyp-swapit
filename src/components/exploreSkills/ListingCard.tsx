@@ -2,17 +2,17 @@ import { Badge, Clock, User } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { Button } from "../ui/button";
 
-// interface CardProps {
-//   title: string;
-//   instructorName: string;
-//   duration: string;
-//   skillLevel: string;
-//   description: string;
-//   tags: string[];
-//   availability: string;
-// }
+interface CardProps {
+  title: string;
+  instructorName: string;
+  duration: string;
+  skillLevel: string;
+  description: string;
+  tags: string[];
+  availability: string;
+}
 
-const ListingCard = (data) => {
+const ListingCard = (data: CardProps) => {
   return (
     <Card className="w-full max-w-sm">
       <CardHeader>
