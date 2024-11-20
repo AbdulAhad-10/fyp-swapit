@@ -1,16 +1,13 @@
-// import Image from "next/image";
 import Link from "next/link";
 import MobileNav from "./MobileNav";
 import { Source_Sans_3 } from "next/font/google";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { SignedIn, UserButton } from "@clerk/nextjs";
 
 const sourceSans = Source_Sans_3({
   subsets: ["latin"],
   weight: ["400", "600", "700"],
   display: "swap",
 });
-
-// import { SignedIn, UserButton } from "@clerk/nextjs";
 
 const Navbar = () => {
   return (
@@ -23,13 +20,9 @@ const Navbar = () => {
       </Link>
 
       <div className="gap-5 flex-between">
-        {/* <SignedIn>
+        <SignedIn>
           <UserButton />
-        </SignedIn> */}
-        <Avatar>
-          <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback className="bg-slate-500">CN</AvatarFallback>
-        </Avatar>
+        </SignedIn>
 
         <MobileNav />
       </div>
