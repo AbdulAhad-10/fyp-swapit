@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { ClerkProvider, SignedIn, SignedOut, SignIn } from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -33,12 +33,7 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <SignedOut>
-            <div className="flex items-center justify-center h-screen">
-              <SignIn routing="hash" />
-            </div>
-          </SignedOut>
-          <SignedIn>{children}</SignedIn>
+          {children}
         </body>
       </html>
     </ClerkProvider>
