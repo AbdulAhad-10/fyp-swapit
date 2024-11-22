@@ -40,7 +40,4 @@ const UserSchema = new mongoose.Schema(
   }
 );
 
-// Basic index for common queries
-UserSchema.index({ clerkId: 1 });
-
 export default mongoose.models.User || mongoose.model("User", UserSchema);
