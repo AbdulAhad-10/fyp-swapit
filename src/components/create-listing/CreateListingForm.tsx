@@ -275,7 +275,7 @@ const CreateListingForm = () => {
                     formData.availableDays.includes(day)
                       ? "border-blue-1 bg-sky-1 text-blue-1"
                       : "hover:bg-gray-50"
-                  } w-full`}
+                  } w-full border`}
                   onClick={() => handleDayToggle(day)}
                 >
                   {day}
