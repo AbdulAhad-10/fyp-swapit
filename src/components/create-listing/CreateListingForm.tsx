@@ -51,7 +51,6 @@ interface FormData {
 }
 
 const CreateListingForm = () => {
-  const [selectedDays, setSelectedDays] = React.useState<Day[]>([]);
   const [formData, setFormData] = React.useState<FormData>({
     title: "",
     description: "",
@@ -65,25 +64,52 @@ const CreateListingForm = () => {
     prerequisites: "",
   });
 
+  const isFormValid = (): boolean => {
+    return !!(
+      formData.title.trim() &&
+      formData.title.length <= 100 &&
+      formData.description.trim() &&
+      formData.description.length <= 500 &&
+      formData.category &&
+      formData.duration &&
+      formData.language &&
+      formData.availableDays.length > 0 &&
+      formData.timeFrom &&
+      formData.timeTo &&
+      formData.timeFrom < formData.timeTo &&
+      formData.timezone
+    );
+  };
+
   const handleDayToggle = (day: Day): void => {
-    if (selectedDays.includes(day)) {
-      setSelectedDays(selectedDays.filter((d) => d !== day));
-    } else {
-      setSelectedDays([...selectedDays, day]);
-    }
+    setFormData((prev) => {
+      const newAvailableDays = prev.availableDays.includes(day)
+        ? prev.availableDays.filter((d) => d !== day)
+        : [...prev.availableDays, day];
+
+      return {
+        ...prev,
+        availableDays: newAvailableDays,
+      };
+    });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    // Handle form submission
-    console.log(formData);
+    if (isFormValid()) {
+      console.log(formData);
+      // Proceed with form submission
+    }
   };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ): void => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
+    const { id, value, maxLength } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: maxLength ? value.slice(0, maxLength) : value,
+    }));
   };
 
   const handleSelectChange = (value: string, field: keyof FormData): void => {
@@ -104,33 +130,54 @@ const CreateListingForm = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label htmlFor="title">Title</Label>
+            <Label htmlFor="title" className="flex justify-between">
+              <span>
+                Title <span className="text-red-500">*</span>
+              </span>
+              <span className="text-sm text-gray-500">
+                {formData.title.length}/100
+              </span>
+            </Label>
             <Input
               id="title"
               placeholder="e.g., Advanced JavaScript Programming"
               className="mt-1.5"
               value={formData.title}
               onChange={handleInputChange}
+              maxLength={100}
+              required
             />
           </div>
 
           <div>
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="flex justify-between">
+              <span>
+                Description <span className="text-red-500">*</span>
+              </span>
+              <span className="text-sm text-gray-500">
+                {formData.description.length}/500
+              </span>
+            </Label>
             <Textarea
               id="description"
               placeholder="Describe what students will learn in your session..."
               className="mt-1.5 h-32"
               value={formData.description}
               onChange={handleInputChange}
+              maxLength={500}
+              required
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category">
+                Category <span className="text-red-500">*</span>
+              </Label>
               <Select
                 value={formData.category}
                 onValueChange={(value) => handleSelectChange(value, "category")}
+                required
               >
                 <SelectTrigger className="mt-1.5">
                   <SelectValue placeholder="Select category" />
@@ -158,11 +205,14 @@ const CreateListingForm = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>Duration</Label>
+            <Label>
+              Duration <span className="text-red-500">*</span>
+            </Label>
             <RadioGroup
               value={formData.duration}
               onValueChange={(value) => handleSelectChange(value, "duration")}
               className="grid grid-cols-4 gap-4 mt-1.5"
+              required
             >
               {[30, 45, 60, 90].map((mins) => (
                 <Label
@@ -182,10 +232,13 @@ const CreateListingForm = () => {
           </div>
 
           <div>
-            <Label>Language</Label>
+            <Label>
+              Language <span className="text-red-500">*</span>
+            </Label>
             <Select
               value={formData.language}
               onValueChange={(value) => handleSelectChange(value, "language")}
+              required
             >
               <SelectTrigger className="mt-1.5">
                 <SelectValue placeholder="Select language" />
@@ -210,14 +263,16 @@ const CreateListingForm = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
-            <Label>Available Days</Label>
+            <Label>
+              Available Days <span className="text-red-500">*</span>
+            </Label>
             <div className="grid grid-cols-7 gap-2 mt-1.5">
               {days.map((day) => (
                 <Button
                   key={day}
                   type="button"
                   className={`${
-                    selectedDays.includes(day)
+                    formData.availableDays.includes(day)
                       ? "border-blue-1 bg-sky-1 text-blue-1"
                       : "hover:bg-gray-50"
                   } w-full`}
@@ -231,10 +286,19 @@ const CreateListingForm = () => {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label>Time From</Label>
+              <Label>
+                Time From <span className="text-red-500">*</span>
+              </Label>
               <Select
                 value={formData.timeFrom}
-                onValueChange={(value) => handleSelectChange(value, "timeFrom")}
+                onValueChange={(value) => {
+                  handleSelectChange(value, "timeFrom");
+                  // Ensure time from is before time to
+                  if (formData.timeTo && value >= formData.timeTo) {
+                    handleSelectChange("", "timeTo");
+                  }
+                }}
+                required
               >
                 <SelectTrigger className="mt-1.5">
                   <SelectValue placeholder="Start time" />
@@ -250,30 +314,45 @@ const CreateListingForm = () => {
             </div>
 
             <div>
-              <Label>Time To</Label>
+              <Label>
+                Time To <span className="text-red-500">*</span>
+              </Label>
               <Select
                 value={formData.timeTo}
-                onValueChange={(value) => handleSelectChange(value, "timeTo")}
+                onValueChange={(value) => {
+                  // Ensure time to is after time from
+                  if (!formData.timeFrom || value > formData.timeFrom) {
+                    handleSelectChange(value, "timeTo");
+                  }
+                }}
+                required
               >
                 <SelectTrigger className="mt-1.5">
                   <SelectValue placeholder="End time" />
                 </SelectTrigger>
                 <SelectContent className="bg-white">
-                  {timeSlots.map((time) => (
-                    <SelectItem key={time} value={time}>
-                      {time}
-                    </SelectItem>
-                  ))}
+                  {timeSlots
+                    .filter(
+                      (time) => !formData.timeFrom || time > formData.timeFrom
+                    )
+                    .map((time) => (
+                      <SelectItem key={time} value={time}>
+                        {time}
+                      </SelectItem>
+                    ))}
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <div>
-            <Label htmlFor="timezone">Timezone</Label>
+            <Label htmlFor="timezone">
+              Timezone <span className="text-red-500">*</span>
+            </Label>
             <Select
               value={formData.timezone}
               onValueChange={(value) => handleSelectChange(value, "timezone")}
+              required
             >
               <SelectTrigger className="mt-1.5">
                 <SelectValue placeholder="Select timezone" />
@@ -299,12 +378,19 @@ const CreateListingForm = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
+            <Label htmlFor="prerequisites" className="flex justify-between">
+              <span>Prerequisites</span>
+              <span className="text-sm text-gray-500">
+                {formData.prerequisites.length}/300
+              </span>
+            </Label>
             <Textarea
               id="prerequisites"
               placeholder="List any prerequisites or requirements for students..."
               className="mt-1.5"
               value={formData.prerequisites}
               onChange={handleInputChange}
+              maxLength={300}
             />
           </div>
         </CardContent>
@@ -320,7 +406,7 @@ const CreateListingForm = () => {
         >
           <Link href="/my-listings">Cancel</Link>
         </Button>
-        <Button type="submit" className="primary-btn">
+        <Button type="submit" className="primary-btn" disabled={!isFormValid()}>
           Create Listing
         </Button>
       </div>
