@@ -25,6 +25,12 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    listingsCreated: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Listing",
+      },
+    ],
     profile: {
       skills_can_teach: [String],
       skills_wants_to_learn: [String],
