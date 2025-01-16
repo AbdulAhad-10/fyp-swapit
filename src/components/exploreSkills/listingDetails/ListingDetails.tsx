@@ -252,9 +252,8 @@ const ListingDetails = () => {
       <SessionRequestDialog
         open={showRequestDialog}
         onOpenChange={setShowRequestDialog}
-        instructorName={listing.creator.username}
-        skillTitle={listing.title}
-        availableDays={listing.availableDays}
+        duration={listing.duration}
+        // availableDays={listing.availableDays}
       />
     </>
   );
