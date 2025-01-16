@@ -68,7 +68,7 @@ const Listings = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-[70vh]">
-        <LoaderSpinner />;
+        <LoaderSpinner />
       </div>
     );
   }
