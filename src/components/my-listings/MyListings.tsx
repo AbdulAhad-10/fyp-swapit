@@ -36,7 +36,6 @@ const MyListings = () => {
     try {
       setIsLoading(true);
       const response = await apiGet("/api/listings/user");
-      console.log("my listings:", response);
 
       if (response.data?.listings) {
         setListings(response.data.listings);
@@ -120,7 +119,7 @@ const MyListings = () => {
               className="flex-1 primary-btn hover:primary-btn"
               asChild
             >
-              <Link href={`/explore-skills/${listing._id}`}>
+              <Link href={`/my-listings/${listing._id}`}>
                 <ExternalLink className="w-4 h-4 mr-2" />
                 View
               </Link>

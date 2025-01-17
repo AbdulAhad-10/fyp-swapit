@@ -17,6 +17,7 @@ interface SessionRequestDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   duration: string;
+  creatorId: string;
 }
 
 const initialValues = {
@@ -28,6 +29,7 @@ const SessionRequestDialog = ({
   open,
   onOpenChange,
   duration,
+  creatorId,
 }: SessionRequestDialogProps) => {
   const [values, setValues] = useState(initialValues);
 
@@ -37,6 +39,7 @@ const SessionRequestDialog = ({
       formattedDate: values.dateTime.toLocaleDateString(),
       formattedTime: values.dateTime.toLocaleTimeString(),
       optionalNote: values.note,
+      creatorId: creatorId,
     });
     onOpenChange(false);
   };
@@ -69,7 +72,7 @@ const SessionRequestDialog = ({
             />
           </div>
 
-          {/* Date Selection */}
+          {/* Date and Time Selection */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">
               Select Date and Time
