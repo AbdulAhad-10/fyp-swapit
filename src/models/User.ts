@@ -31,6 +31,20 @@ const UserSchema = new mongoose.Schema(
         ref: "Listing",
       },
     ],
+    requests: {
+      sent: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Request",
+        },
+      ],
+      received: [
+        {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Request",
+        },
+      ],
+    },
     profile: {
       skills_can_teach: [String],
       skills_wants_to_learn: [String],

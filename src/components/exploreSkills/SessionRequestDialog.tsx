@@ -1,5 +1,7 @@
-import React, { useState } from "react";
-import { Clock } from "lucide-react";
+const MAX_NOTE_LENGTH = 150;
+
+import { useState } from "react";
+import { Clock, Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -12,12 +14,14 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { apiPost } from "@/utils/api";
 
 interface SessionRequestDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   duration: string;
   creatorId: string;
+  listingId: string;
 }
 
 const initialValues = {
@@ -30,18 +34,63 @@ const SessionRequestDialog = ({
   onOpenChange,
   duration,
   creatorId,
+  listingId,
 }: SessionRequestDialogProps) => {
-  const [values, setValues] = useState(initialValues);
+  // const [values, setValues] = useState(initialValues);
 
-  const handleSubmit = () => {
-    console.log({
-      selectedDateTime: values.dateTime.toLocaleString(),
-      formattedDate: values.dateTime.toLocaleDateString(),
-      formattedTime: values.dateTime.toLocaleTimeString(),
-      optionalNote: values.note,
-      creatorId: creatorId,
-    });
-    onOpenChange(false);
+  // const handleSubmit = () => {
+  //   const payload = {
+  //     selectedDateTime: values.dateTime.toLocaleString(),
+  //     formattedDate: values.dateTime.toLocaleDateString(),
+  //     formattedTime: values.dateTime.toLocaleTimeString(),
+  //     optionalNote: values.note,
+  //     creatorId: creatorId,
+  //     listingId: listingId,
+  //   };
+  //   console.log("Request Payload:", payload);
+
+  //   const response = apiPost("api/requests", payload);
+
+  //   console.log("response:", response);
+
+  //   onOpenChange(false);
+  // };
+  const [values, setValues] = useState(initialValues);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const note = e.target.value;
+    if (note.length <= MAX_NOTE_LENGTH) {
+      setValues({ ...values, note });
+    }
+  };
+
+  const handleSubmit = async () => {
+    try {
+      setIsSubmitting(true);
+      setError("");
+
+      const response = await apiPost("/api/requests", {
+        instructorId: creatorId,
+        listingId,
+        proposedDateTime: values.dateTime,
+        note: values.note.trim(),
+      });
+
+      if (response.error) {
+        throw new Error(response.error);
+      }
+
+      onOpenChange(false);
+
+      // Reset form values
+      setValues(initialValues);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to send request");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -65,11 +114,14 @@ const SessionRequestDialog = ({
             </label>
             <Textarea
               value={values.note}
-              onChange={(e) => setValues({ ...values, note: e.target.value })}
+              onChange={handleNoteChange}
               placeholder="Share what you'd like to focus on during the session..."
               className="resize-none min-h-[80px] p-3 border border-gray-300"
               rows={3}
             />
+            <div className="text-xs text-gray-500 flex justify-end">
+              {values.note.length}/{MAX_NOTE_LENGTH} characters
+            </div>
           </div>
 
           {/* Date and Time Selection */}
@@ -97,6 +149,7 @@ const SessionRequestDialog = ({
         </div>
 
         <DialogFooter className="sm:justify-between border-t pt-4">
+          {error && <p className="text-red-500 text-sm">{error}</p>}
           <div className="flex items-center text-sm text-gray-600">
             <Clock className="inline-block h-4 w-4 mr-1" />
             {` Duration: ${duration} minutes`}
@@ -106,14 +159,23 @@ const SessionRequestDialog = ({
               variant="outline"
               onClick={() => onOpenChange(false)}
               className="secondary-btn hover:secondary-btn"
+              disabled={isSubmitting}
             >
               Cancel
             </Button>
             <Button
               onClick={handleSubmit}
               className="primary-btn hover:primary-btn"
+              disabled={isSubmitting}
             >
-              Send Request
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="animate-spin mr-1" />
+                  Sending...
+                </>
+              ) : (
+                "Send Request"
+              )}
             </Button>
           </div>
         </DialogFooter>
