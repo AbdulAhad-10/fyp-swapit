@@ -254,6 +254,7 @@ const ListingDetails = () => {
         onOpenChange={setShowRequestDialog}
         duration={listing.duration}
         creatorId={listing.creator._id}
+        listingId={listing._id}
         // availableDays={listing.availableDays}
       />
     </>
