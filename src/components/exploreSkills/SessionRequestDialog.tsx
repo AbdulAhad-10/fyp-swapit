@@ -71,7 +71,7 @@ const SessionRequestDialog = ({
       setIsSubmitting(true);
       setError("");
 
-      const response = await apiPost("/api/requests", {
+      const response = await apiPost("/api/requests/send", {
         instructorId: creatorId,
         listingId,
         proposedDateTime: values.dateTime,
