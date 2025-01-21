@@ -1,4 +1,4 @@
-// import Image from "next/image";
+import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
@@ -41,7 +41,7 @@ const getStatusBadgeColor = (status: Request["status"]) => {
 };
 
 const RequestCard = ({ request }: { request: Request }) => (
-  <Card className="mb-4 bg-white">
+  <Card className="mb-4 bg-white rounded-[8px]">
     <CardContent className="p-4">
       <div className="flex justify-between items-start">
         <div className="space-y-2">
@@ -88,14 +88,16 @@ const RequestCard = ({ request }: { request: Request }) => (
         </div>
 
         {/* User Avatar */}
-        {/* <Image
+        <Image
           src={request.instructorId.profileImageUrl}
           alt={request.instructorId.username}
-          className="w-12 h-12 rounded-full"
-          width={50}
-          height={50}
-        /> */}
-        <User className="w-12 h-12 " />
+          className="w-10 h-10 rounded-full"
+          width={30}
+          height={30}
+        />
+        {/* <div className="bg-sky-1 rounded-full p-2">
+          <User className="w-6 h-6 " />
+        </div> */}
       </div>
     </CardContent>
   </Card>

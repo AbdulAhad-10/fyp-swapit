@@ -1,5 +1,10 @@
+"use client";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import RequestCard from "./RequestCard";
+import { apiGet } from "@/utils/api";
+import { useEffect, useState } from "react";
+import LoaderSpinner from "../ui/loader";
 
 interface Request {
   _id: string;
@@ -25,86 +30,136 @@ interface Request {
 }
 
 export default function RequestsDisplay() {
-  const receivedRequests: Request[] = [
-    {
-      _id: "req1",
-      instructorId: {
-        _id: "inst1",
-        username: "Instructor A",
-        profileImageUrl: "/images/instructor-a.jpg",
-      },
-      learnerId: {
-        _id: "learner1",
-        username: "Learner X",
-        profileImageUrl: "/images/learner-x.jpg",
-      },
-      listingId: {
-        _id: "listing1",
-        title: "Python Basics",
-        duration: "1 hour",
-      },
-      proposedDateTime: new Date(),
-      note: "Looking forward to this session!",
-      status: "pending",
-      createdAt: new Date(),
-    },
-  ];
+  const [receivedRequests, setReceivedRequests] = useState<Request[]>([]);
+  const [sentRequests, setSentRequests] = useState<Request[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const sentRequests: Request[] = [
-    {
-      _id: "req2",
-      instructorId: {
-        _id: "inst2",
-        username: "Instructor B",
-        profileImageUrl: "/images/instructor-b.jpg",
-      },
-      learnerId: {
-        _id: "learner2",
-        username: "Learner Y",
-        profileImageUrl: "/images/learner-y.jpg",
-      },
-      listingId: {
-        _id: "listing2",
-        title: "Advanced React",
-        duration: "2 hours",
-      },
-      proposedDateTime: new Date(),
-      note: "Excited for this learning session.",
-      status: "accepted",
-      createdAt: new Date(),
-    },
-  ];
+  const getRequests = async () => {
+    try {
+      setIsLoading(true);
+      const response = await apiGet("/api/requests");
+
+      if (response.data?.requests) {
+        // Transform the received requests data
+        const transformedReceived = response.data.requests.received.map(
+          (req: Request) => ({
+            _id: req._id,
+            instructorId: {
+              _id: req.instructorId._id || req.instructorId,
+              username: req.instructorId.username || "Unknown",
+              profileImageUrl:
+                req.instructorId.profileImageUrl || "/api/placeholder/40/40",
+            },
+            learnerId: {
+              _id: req.learnerId._id || req.learnerId,
+              username: req.learnerId.username || "Unknown",
+              profileImageUrl:
+                req.learnerId.profileImageUrl || "/api/placeholder/40/40",
+            },
+            listingId: {
+              _id: req.listingId._id || req.listingId,
+              title: req.listingId.title || "Unknown Listing",
+              duration: req.listingId.duration || "Not specified",
+            },
+            proposedDateTime: new Date(req.proposedDateTime),
+            note: req.note,
+            status: req.status,
+            createdAt: new Date(req.createdAt),
+          })
+        );
+
+        // Transform the sent requests data
+        const transformedSent = response.data.requests.sent.map(
+          (req: Request) => ({
+            _id: req._id,
+            instructorId: {
+              _id: req.instructorId._id || req.instructorId,
+              username: req.instructorId.username || "Unknown",
+              profileImageUrl:
+                req.instructorId.profileImageUrl || "/api/placeholder/40/40",
+            },
+            learnerId: {
+              _id: req.learnerId._id || req.learnerId,
+              username: req.learnerId.username || "Unknown",
+              profileImageUrl:
+                req.learnerId.profileImageUrl || "/api/placeholder/40/40",
+            },
+            listingId: {
+              _id: req.listingId._id || req.listingId,
+              title: req.listingId.title || "Unknown Listing",
+              duration: req.listingId.duration || "Not specified",
+            },
+            proposedDateTime: new Date(req.proposedDateTime),
+            note: req.note,
+            status: req.status,
+            createdAt: new Date(req.createdAt),
+          })
+        );
+
+        setReceivedRequests(transformedReceived);
+        setSentRequests(transformedSent);
+      }
+    } catch (error) {
+      console.error("Error fetching requests:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getRequests();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-[60vh]">
+        <LoaderSpinner />
+      </div>
+    );
+  }
 
   return (
-    <Tabs defaultValue="received">
-      <TabsList className="bg-white">
-        <TabsTrigger value="received">
-          Received ({receivedRequests.length})
-        </TabsTrigger>
-        <TabsTrigger value="sent">Sent ({sentRequests.length})</TabsTrigger>
-      </TabsList>
-
-      <TabsContent value="received">
-        {receivedRequests.length === 0 ? (
-          <p className="text-gray-500">No requests received yet</p>
-        ) : (
-          receivedRequests.map((request) => (
-            <RequestCard key={request._id} request={request} />
-          ))
-        )}
-      </TabsContent>
-
-      <TabsContent value="sent">
-        {sentRequests.length === 0 ? (
-          <p className="text-gray-500">
-            You haven&apos;t sent any requests yet
-          </p>
-        ) : (
-          sentRequests.map((request) => (
-            <RequestCard key={request._id} request={request} />
-          ))
-        )}
-      </TabsContent>
-    </Tabs>
+    <div className="w-full">
+      <Tabs defaultValue="received" className="w-full">
+        <TabsList className="w-fit border-b">
+          <TabsTrigger
+            value="received"
+            className="px-4 py-2 text-sm font-medium text-gray-600 data-[state=active]:text-blue-1 data-[state=active]:border-b-2 data-[state=active]:border-blue-1"
+          >
+            Received ({receivedRequests.length})
+          </TabsTrigger>
+          <TabsTrigger
+            value="sent"
+            className="px-4 py-2 text-sm font-medium text-gray-600 data-[state=active]:text-blue-1 data-[state=active]:border-b-2 data-[state=active]:border-blue-1"
+          >
+            Sent ({sentRequests.length})
+          </TabsTrigger>
+        </TabsList>
+        <TabsContent value="received">
+          {receivedRequests.length === 0 ? (
+            <p className="text-gray-500 mt-4">No requests received yet</p>
+          ) : (
+            <div className="space-y-4 mt-4">
+              {receivedRequests.map((request) => (
+                <RequestCard key={request._id} request={request} />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+        <TabsContent value="sent">
+          {sentRequests.length === 0 ? (
+            <p className="text-gray-500 mt-4">
+              You haven&apos;t sent any requests yet
+            </p>
+          ) : (
+            <div className="space-y-4 mt-4">
+              {sentRequests.map((request) => (
+                <RequestCard key={request._id} request={request} />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 }
