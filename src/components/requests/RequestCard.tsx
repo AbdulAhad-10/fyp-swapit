@@ -3,7 +3,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { Clock, User, CalendarDays, X } from "lucide-react";
+import { Clock, User, CalendarDays, X, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { apiDelete } from "@/utils/api";
+import { removeRequest } from "@/store/requestsSlice";
+import { useDispatch } from "react-redux";
+import { useToast } from "@/hooks/use-toast";
 
 interface Request {
   _id: string;
@@ -47,10 +52,38 @@ const getStatusBadgeColor = (status: Request["status"]) => {
 };
 
 const RequestCard = ({ request, isSentRequest = false }: RequestCardProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useDispatch();
+  const { toast } = useToast();
+
   const handleCancel = async () => {
-    // TODO: Implement cancel logic
-    console.log("Cancelling request:", request._id);
+    try {
+      setIsLoading(true);
+      const response = await apiDelete(`/api/requests/cancel/${request._id}`);
+
+      if (response.error) {
+        throw new Error(response.error);
+      }
+
+      dispatch(removeRequest({ requestId: request._id }));
+
+      // Call the callback function if provided
+    } catch (error) {
+      console.error("Error cancelling request:", error);
+      // You might want to show an error toast/notification here
+      toast({
+        title: "Error",
+        description: "Failed to cancel request. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
+  // const handleCancel = async () => {
+  //   // TODO: Implement cancel logic
+  //   console.log("Cancelling request:", request._id);
+  // };
 
   // Determine which user details to display based on whether it's a sent or received request
   const displayUser = isSentRequest ? request.instructorId : request.learnerId;
@@ -75,9 +108,19 @@ const RequestCard = ({ request, isSentRequest = false }: RequestCardProps) => {
                 <Button
                   onClick={handleCancel}
                   className="secondary-btn hover:secondary-btn"
+                  disabled={isLoading}
                 >
-                  <X className="h-4 w-4 mr-1" />
-                  Cancel Request
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                      Cancelling...
+                    </>
+                  ) : (
+                    <>
+                      <X className="h-4 w-4 mr-1" />
+                      Cancel Request
+                    </>
+                  )}
                 </Button>
               )}
             </div>
