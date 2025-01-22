@@ -5,20 +5,19 @@ import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
 import { Request } from "@/models/Request";
 
-export async function DELETE(req: Request) {
+export async function DELETE(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
   try {
     await connectDB();
 
-    // Authenticate user
     const { userId } = auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get request ID from request body
-    const body = await req.json();
-    const { requestId } = body;
-
+    const requestId = params.id;
     if (!requestId) {
       return NextResponse.json(
         { error: "Request ID is required" },
@@ -26,19 +25,16 @@ export async function DELETE(req: Request) {
       );
     }
 
-    // Find user
     const user = await User.findOne({ clerkId: userId });
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Find the request and ensure it belongs to the user
     const request = await Request.findOne({
       _id: requestId,
       learnerId: user._id,
-      status: "pending", // Only allow canceling pending requests
+      status: "pending",
     });
-
     if (!request) {
       return NextResponse.json(
         { error: "Request not found or not authorized to cancel" },
@@ -46,20 +42,14 @@ export async function DELETE(req: Request) {
       );
     }
 
-    // Delete the request
     await Request.findByIdAndDelete(requestId);
-
-    // Remove request reference from user's sent requests array
     await User.findByIdAndUpdate(user._id, {
       $pull: { "requests.sent": requestId },
     });
 
-    return NextResponse.json({
-      message: "Request cancelled successfully",
-    });
+    return NextResponse.json({ message: "Request cancelled successfully" });
   } catch (error) {
     console.error("Error cancelling request:", error);
-
     if (error instanceof Error) {
       if (error instanceof mongoose.Error) {
         return NextResponse.json(
@@ -72,7 +62,6 @@ export async function DELETE(req: Request) {
         { status: 500 }
       );
     }
-
     return NextResponse.json(
       { error: "Unknown Error", details: String(error) },
       { status: 500 }
