@@ -1,8 +1,9 @@
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { Clock, User, CalendarDays } from "lucide-react";
+import { Clock, User, CalendarDays, X } from "lucide-react";
 
 interface Request {
   _id: string;
@@ -21,10 +22,15 @@ interface Request {
     title: string;
     duration: string;
   };
-  proposedDateTime: Date;
+  proposedDateTime: string;
   note?: string;
-  status: "pending" | "accepted" | "rejected";
-  createdAt: Date;
+  status: "pending" | "accepted" | "rejected" | "expired";
+  createdAt: string;
+}
+
+interface RequestCardProps {
+  request: Request;
+  isSentRequest?: boolean;
 }
 
 const getStatusBadgeColor = (status: Request["status"]) => {
@@ -40,35 +46,82 @@ const getStatusBadgeColor = (status: Request["status"]) => {
   }
 };
 
-const RequestCard = ({ request }: { request: Request }) => (
-  <Card className="mb-4 bg-white rounded-[8px]">
-    <CardContent className="p-4">
-      <div className="flex justify-between items-start">
-        <div className="space-y-2">
-          {/* Title and Status */}
-          <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-lg">{request.listingId.title}</h3>
-            <Badge
-              className={`${getStatusBadgeColor(request.status)} capitalize`}
-            >
-              {request.status}
-            </Badge>
+const RequestCard = ({ request, isSentRequest = false }: RequestCardProps) => {
+  const handleCancel = async () => {
+    // TODO: Implement cancel logic
+    console.log("Cancelling request:", request._id);
+  };
+
+  // Determine which user details to display based on whether it's a sent or received request
+  const displayUser = isSentRequest ? request.instructorId : request.learnerId;
+  const userRole = isSentRequest ? "Instructor" : "Sender";
+
+  return (
+    <Card className="w-full bg-white rounded-[8px]">
+      <CardContent className="p-6">
+        <div className="flex flex-col space-y-4">
+          {/* Header: Title and Status */}
+          <div className="flex justify-between items-start">
+            <h3 className="text-lg font-semibold">{request.listingId.title}</h3>
+            <div className="flex items-center space-x-2">
+              <Badge
+                variant="secondary"
+                className={getStatusBadgeColor(request.status)}
+              >
+                {request.status.charAt(0).toUpperCase() +
+                  request.status.slice(1)}
+              </Badge>
+              {isSentRequest && request.status === "pending" && (
+                <Button
+                  onClick={handleCancel}
+                  className="secondary-btn hover:secondary-btn"
+                >
+                  <X className="h-4 w-4 mr-1" />
+                  Cancel Request
+                </Button>
+              )}
+            </div>
           </div>
 
           {/* User Info */}
-          <div className="flex items-center text-gray-600 gap-2">
-            <User className="h-4 w-4" />
-            <span className="text-sm">{request.instructorId.username}</span>
+          <div className="flex items-center space-x-3">
+            <div className="relative h-10 w-10 rounded-full overflow-hidden">
+              <Image
+                src={displayUser.profileImageUrl}
+                alt={displayUser.username}
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div>
+              <p className="font-medium">{displayUser.username}</p>
+              <div className="flex items-center text-sm text-gray-500">
+                <User className="h-4 w-4 mr-1" />
+                {userRole}
+              </div>
+            </div>
           </div>
 
-          {/* DateTime */}
-          <div className="flex items-center gap-4 text-sm text-gray-600">
-            <div className="flex items-center gap-1">
-              <CalendarDays className="h-4 w-4" />
+          {/* DateTime and Duration
+          <div>
+            <div className="flex items-center text-sm text-gray-600">
+              <CalendarDays className="h-4 w-4 mr-2" />
               {format(new Date(request.proposedDateTime), "MMM d, yyyy")}
             </div>
-            <div className="flex items-center gap-1">
-              <Clock className="h-4 w-4" />
+            <div className="flex items-center text-sm text-gray-600">
+              <Clock className="h-4 w-4 mr-2" />
+              {format(new Date(request.proposedDateTime), "h:mm a")}
+            </div>
+          </div> */}
+
+          {/* DateTime and Duration */}
+          <div>
+            <div className="flex items-center text-sm text-gray-600">
+              <CalendarDays className="h-4 w-4 mr-2" />
+              {format(new Date(request.proposedDateTime), "MMM d, yyyy")}
+            </div>
+            <div className="flex items-center text-sm text-gray-600">
+              <Clock className="h-4 w-4 mr-2" />
               {format(new Date(request.proposedDateTime), "h:mm a")}
             </div>
           </div>
@@ -80,27 +133,15 @@ const RequestCard = ({ request }: { request: Request }) => (
 
           {/* Note if exists */}
           {request.note && (
-            <div className="mt-2 text-sm text-gray-600 bg-gray-50 p-2 rounded">
-              <p className="font-medium">Note:</p>
-              <p>{request.note}</p>
+            <div className="mt-2 p-3 bg-gray-50 rounded-md">
+              <p className="text-sm font-medium text-gray-700">Note:</p>
+              <p className="text-sm text-gray-600">{request.note}</p>
             </div>
           )}
         </div>
-
-        {/* User Avatar */}
-        <Image
-          src={request.instructorId.profileImageUrl}
-          alt={request.instructorId.username}
-          className="w-10 h-10 rounded-full"
-          width={30}
-          height={30}
-        />
-        {/* <div className="bg-sky-1 rounded-full p-2">
-          <User className="w-6 h-6 " />
-        </div> */}
-      </div>
-    </CardContent>
-  </Card>
-);
+      </CardContent>
+    </Card>
+  );
+};
 
 export default RequestCard;

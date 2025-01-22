@@ -36,25 +36,6 @@ const SessionRequestDialog = ({
   creatorId,
   listingId,
 }: SessionRequestDialogProps) => {
-  // const [values, setValues] = useState(initialValues);
-
-  // const handleSubmit = () => {
-  //   const payload = {
-  //     selectedDateTime: values.dateTime.toLocaleString(),
-  //     formattedDate: values.dateTime.toLocaleDateString(),
-  //     formattedTime: values.dateTime.toLocaleTimeString(),
-  //     optionalNote: values.note,
-  //     creatorId: creatorId,
-  //     listingId: listingId,
-  //   };
-  //   console.log("Request Payload:", payload);
-
-  //   const response = apiPost("api/requests", payload);
-
-  //   console.log("response:", response);
-
-  //   onOpenChange(false);
-  // };
   const [values, setValues] = useState(initialValues);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
