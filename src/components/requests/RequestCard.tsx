@@ -1,14 +1,11 @@
 import Image from "next/image";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
-import { Clock, User, CalendarDays, X, Loader2 } from "lucide-react";
-import { useState } from "react";
-import { apiDelete } from "@/utils/api";
-import { removeRequest } from "@/store/requestsSlice";
-import { useDispatch } from "react-redux";
-import { useToast } from "@/hooks/use-toast";
+import { Clock, User, CalendarDays } from "lucide-react";
+import AcceptRequest from "./requestActions/AcceptRequest";
+import RejectRequest from "./requestActions/RejectRequest";
+import CancelRequest from "./requestActions/CancelRequest";
 
 interface Request {
   _id: string;
@@ -52,39 +49,6 @@ const getStatusBadgeColor = (status: Request["status"]) => {
 };
 
 const RequestCard = ({ request, isSentRequest = false }: RequestCardProps) => {
-  const [isLoading, setIsLoading] = useState(false);
-  const dispatch = useDispatch();
-  const { toast } = useToast();
-
-  const handleCancel = async () => {
-    try {
-      setIsLoading(true);
-      const response = await apiDelete(`/api/requests/cancel/${request._id}`);
-
-      if (response.error) {
-        throw new Error(response.error);
-      }
-
-      dispatch(removeRequest({ requestId: request._id }));
-
-      // Call the callback function if provided
-    } catch (error) {
-      console.error("Error cancelling request:", error);
-      // You might want to show an error toast/notification here
-      toast({
-        title: "Error",
-        description: "Failed to cancel request. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-  // const handleCancel = async () => {
-  //   // TODO: Implement cancel logic
-  //   console.log("Cancelling request:", request._id);
-  // };
-
   // Determine which user details to display based on whether it's a sent or received request
   const displayUser = isSentRequest ? request.instructorId : request.learnerId;
   const userRole = isSentRequest ? "Instructor" : "Sender";
@@ -105,23 +69,7 @@ const RequestCard = ({ request, isSentRequest = false }: RequestCardProps) => {
                   request.status.slice(1)}
               </Badge>
               {isSentRequest && request.status === "pending" && (
-                <Button
-                  onClick={handleCancel}
-                  className="secondary-btn hover:secondary-btn"
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-1 animate-spin" />
-                      Cancelling...
-                    </>
-                  ) : (
-                    <>
-                      <X className="h-4 w-4 mr-1" />
-                      Cancel Request
-                    </>
-                  )}
-                </Button>
+                <CancelRequest id={request._id} />
               )}
             </div>
           </div>
@@ -183,6 +131,14 @@ const RequestCard = ({ request, isSentRequest = false }: RequestCardProps) => {
           )}
         </div>
       </CardContent>
+      <CardFooter className="flex justify-end">
+        {!isSentRequest && request.status === "pending" && (
+          <div className="flex gap-3">
+            <RejectRequest id={request._id} />
+            <AcceptRequest id={request._id} />
+          </div>
+        )}
+      </CardFooter>
     </Card>
   );
 };
