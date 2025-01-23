@@ -94,3 +94,9 @@ export const apiDelete = <T = any>(
   url: string,
   options: Omit<ApiRequestOptions, "method"> = {}
 ) => apiRequest<T>(url, { ...options, method: "DELETE" });
+
+export const apiPatch = <T = any>(
+  url: string,
+  body: any,
+  options: Omit<ApiRequestOptions, "method" | "body"> = {}
+) => apiRequest<T>(url, { ...options, method: "PATCH", body });
