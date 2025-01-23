@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { apiGet } from "@/utils/api";
-import { setRequests } from "@/store/requestsSlice";
+import { apiGet, apiPatch } from "@/utils/api";
+import { setRequests, updateRequestStatus } from "@/store/requestsSlice";
 import RequestCard from "./RequestCard";
 import LoaderSpinner from "../ui/loader";
 import { RootState } from "@/store/store";
@@ -70,8 +70,10 @@ export default function RequestsDisplay() {
 
       if (response.data?.requests) {
         const transformedData = {
-          received: response.data.requests.received.map(transformRequest),
-          sent: response.data.requests.sent.map(transformRequest),
+          received: await processRequestsForExpiration(
+            response.data.requests.received
+          ),
+          sent: await processRequestsForExpiration(response.data.requests.sent),
         };
 
         dispatch(setRequests(transformedData));
@@ -83,9 +85,75 @@ export default function RequestsDisplay() {
     }
   };
 
+  const processRequestsForExpiration = async (requests: Request[]) => {
+    const now = new Date();
+    const processedRequests = [];
+
+    for (const req of requests) {
+      const proposedDateTime = new Date(req.proposedDateTime);
+
+      if (req.status === "pending" && proposedDateTime < now) {
+        try {
+          const updateResponse = await apiPatch(
+            `/api/requests/status/${req._id}`,
+            {
+              status: "expired",
+            }
+          );
+
+          if (updateResponse.data) {
+            dispatch(
+              updateRequestStatus({
+                requestId: req._id,
+                status: "expired",
+              })
+            );
+            processedRequests.push(
+              transformRequest({
+                ...req,
+                status: "expired",
+              })
+            );
+          } else {
+            processedRequests.push(transformRequest(req));
+          }
+        } catch (error) {
+          console.error("Error updating request status:", error);
+          processedRequests.push(transformRequest(req));
+        }
+      } else {
+        processedRequests.push(transformRequest(req));
+      }
+    }
+
+    return processedRequests;
+  };
+
   useEffect(() => {
     fetchRequests();
   }, [dispatch]);
+
+  const renderRequestSection = (
+    requests: Request[],
+    emptyMessage: string,
+    isSentRequest: boolean,
+    status: string
+  ) => {
+    const filteredRequests = requests.filter((r) => r.status === status);
+    return filteredRequests.length === 0 ? (
+      <p className="text-gray-500 mt-4">{emptyMessage}</p>
+    ) : (
+      <div className="space-y-4 mt-4">
+        {filteredRequests.map((request) => (
+          <RequestCard
+            key={request._id}
+            request={request}
+            isSentRequest={isSentRequest}
+          />
+        ))}
+      </div>
+    );
+  };
 
   if (isLoading) {
     return (
@@ -103,42 +171,57 @@ export default function RequestsDisplay() {
             value="received"
             className="px-4 py-2 text-sm font-medium text-gray-600 data-[state=active]:text-blue-1 data-[state=active]:border-b-2 data-[state=active]:border-blue-1"
           >
-            Received ({receivedRequests.length})
+            Received (
+            {receivedRequests.filter((r) => r.status === "pending").length})
           </TabsTrigger>
           <TabsTrigger
             value="sent"
             className="px-4 py-2 text-sm font-medium text-gray-600 data-[state=active]:text-blue-1 data-[state=active]:border-b-2 data-[state=active]:border-blue-1"
           >
-            Sent ({sentRequests.length})
+            Sent ({sentRequests.filter((r) => r.status === "pending").length})
           </TabsTrigger>
         </TabsList>
         <TabsContent value="received">
-          {receivedRequests.length === 0 ? (
-            <p className="text-gray-500 mt-4">No requests received yet</p>
-          ) : (
-            <div className="space-y-4 mt-4">
-              {receivedRequests.map((request) => (
-                <RequestCard key={request._id} request={request} />
-              ))}
-            </div>
-          )}
+          <div>
+            <h4 className="text-lg font-semibold mb-4">Active Requests</h4>
+            {renderRequestSection(
+              receivedRequests,
+              "No active requests received",
+              false,
+              "pending"
+            )}
+
+            <h4 className="text-lg font-semibold mb-4 mt-6">
+              Expired Requests
+            </h4>
+            {renderRequestSection(
+              receivedRequests,
+              "No expired requests",
+              false,
+              "expired"
+            )}
+          </div>
         </TabsContent>
         <TabsContent value="sent">
-          {sentRequests.length === 0 ? (
-            <p className="text-gray-500 mt-4">
-              You haven&apos;t sent any requests yet
-            </p>
-          ) : (
-            <div className="space-y-4 mt-4">
-              {sentRequests.map((request) => (
-                <RequestCard
-                  key={request._id}
-                  request={request}
-                  isSentRequest={true}
-                />
-              ))}
-            </div>
-          )}
+          <div>
+            <h4 className="text-lg font-semibold mb-4">Active Requests</h4>
+            {renderRequestSection(
+              sentRequests,
+              "No active requests sent",
+              true,
+              "pending"
+            )}
+
+            <h4 className="text-lg font-semibold mb-4 mt-6">
+              Expired Requests
+            </h4>
+            {renderRequestSection(
+              sentRequests,
+              "No expired requests",
+              true,
+              "expired"
+            )}
+          </div>
         </TabsContent>
       </Tabs>
     </div>
