@@ -49,7 +49,15 @@ const requestsSlice = createSlice({
       state,
       action: PayloadAction<{ requestId: string; status: Request["status"] }>
     ) => {
+      // Update sent requests
       state.sent = state.sent.map((request) =>
+        request._id === action.payload.requestId
+          ? { ...request, status: action.payload.status }
+          : request
+      );
+
+      // Update received requests
+      state.received = state.received.map((request) =>
         request._id === action.payload.requestId
           ? { ...request, status: action.payload.status }
           : request
