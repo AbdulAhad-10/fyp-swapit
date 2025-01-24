@@ -192,7 +192,7 @@ export default function RequestsDisplay() {
             )}
 
             <h4 className="text-lg font-semibold mb-4 mt-6">
-              Expired Requests
+              Expired Requests (Older than 7 days)
             </h4>
             {renderRequestSection(
               receivedRequests,
@@ -213,7 +213,7 @@ export default function RequestsDisplay() {
             )}
 
             <h4 className="text-lg font-semibold mb-4 mt-6">
-              Expired Requests
+              Expired Requests (Older than 7 days)
             </h4>
             {renderRequestSection(
               sentRequests,
