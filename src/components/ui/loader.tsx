@@ -6,6 +6,14 @@ const LoaderSpinner = () => {
   );
 };
 
+const LoaderSpinnerScreen = () => {
+  return (
+    <div className="flex items-center justify-center w-full h-screen">
+      <LoaderSpinner />
+    </div>
+  );
+};
+
 const LoaderCard = () => {
   return (
     <div className="w-full p-8 bg-white rounded-lg shadow-sm">
@@ -54,6 +62,7 @@ export {
   LoaderFullscreen, // Full-screen overlay loader
   LoaderInline, // Small inline loader
   LoaderDots, // Bouncing dots animation
+  LoaderSpinnerScreen, // Full screen loader
 };
 
 // Default export
