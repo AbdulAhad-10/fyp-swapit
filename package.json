@@ -20,6 +20,7 @@
     "@radix-ui/react-toast": "^1.2.2",
     "@radix-ui/react-tooltip": "^1.1.6",
     "@reduxjs/toolkit": "^2.5.0",
+    "@stream-io/video-react-sdk": "^1.7.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "lucide-react": "^0.460.0",
