@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import connectDB from "@/lib/mongodb";
 import User from "@/models/User";
 import { Request } from "@/models/Request";
+import Session from "@/models/Session";
 
 export async function PATCH(
   req: Request,
@@ -11,7 +12,6 @@ export async function PATCH(
 ) {
   try {
     await connectDB();
-
     const { userId } = auth();
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -25,7 +25,7 @@ export async function PATCH(
       );
     }
 
-    const { status } = await req.json();
+    const { status, callId, meetingLink, title, duration } = await req.json();
     if (
       !status ||
       !["pending", "accepted", "rejected", "expired"].includes(status)
@@ -38,9 +38,7 @@ export async function PATCH(
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    const request = await Request.findOne({
-      _id: requestId,
-    });
+    const request = await Request.findOne({ _id: requestId });
     if (!request) {
       return NextResponse.json(
         { error: "Request not found or not authorized" },
@@ -48,7 +46,6 @@ export async function PATCH(
       );
     }
 
-    // Only allow status changes from specific states
     if (request.status === "accepted" && status !== "expired") {
       return NextResponse.json(
         { error: "Cannot change status of an accepted request" },
@@ -58,6 +55,27 @@ export async function PATCH(
 
     request.status = status;
     await request.save();
+
+    // Create session if request is accepted
+    if (status === "accepted" && callId && meetingLink) {
+      const session = await Session.create({
+        requestId: request._id,
+        instructorId: request.instructorId,
+        learnerId: request.learnerId,
+        listingId: request.listingId,
+        title: title,
+        scheduledFor: request.proposedDateTime,
+        duration: duration,
+        callId,
+        meetingLink,
+      });
+
+      return NextResponse.json({
+        message: "Request accepted and session created",
+        updatedRequest: request,
+        session,
+      });
+    }
 
     return NextResponse.json({
       message: "Request status updated successfully",
