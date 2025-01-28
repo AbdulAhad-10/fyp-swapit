@@ -135,7 +135,7 @@ const RequestCard = ({ request, isSentRequest = false }: RequestCardProps) => {
         {!isSentRequest && request.status === "pending" && (
           <div className="flex gap-3">
             <RejectRequest id={request._id} />
-            <AcceptRequest id={request._id} />
+            <AcceptRequest request={request} />
           </div>
         )}
       </CardFooter>
