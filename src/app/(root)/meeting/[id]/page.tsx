@@ -3,7 +3,7 @@
 
 import MeetingRoom from "@/components/meeting/MeetingRoom";
 import MeetingSetup from "@/components/meeting/MeetingSetup";
-import LoaderSpinner from "@/components/ui/loader";
+import { LoaderSpinnerScreen } from "@/components/ui/loader";
 import { useGetCallById } from "@/hooks/useGetCallById";
 import { useUser } from "@clerk/nextjs";
 import { StreamCall, StreamTheme } from "@stream-io/video-react-sdk";
@@ -14,7 +14,7 @@ const Meeting = ({ params: { id } }: { params: { id: string } }) => {
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const { call, isCallLoading } = useGetCallById(id);
 
-  if (!isLoaded || isCallLoading) return <LoaderSpinner />;
+  if (!isLoaded || isCallLoading) return <LoaderSpinnerScreen />;
 
   return (
     <main className="w-full h-screen">
