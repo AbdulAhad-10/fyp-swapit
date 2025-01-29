@@ -5,7 +5,6 @@ import { apiPatch } from "@/utils/api";
 import { useUser } from "@clerk/nextjs";
 import { useStreamVideoClient } from "@stream-io/video-react-sdk";
 import { Loader2 } from "lucide-react";
-import { list } from "postcss";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 

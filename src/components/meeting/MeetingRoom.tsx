@@ -22,7 +22,6 @@ import {
 
 import EndCallButton from "./EndCallButton";
 import { LoaderSpinnerScreen } from "../ui/loader";
-import { cn } from "@/lib/utils";
 
 type CallLayoutType = "grid" | "speaker-left" | "speaker-right";
 
