@@ -25,7 +25,8 @@ export async function PATCH(
       );
     }
 
-    const { status, callId, meetingLink, title, duration } = await req.json();
+    const { status, callId, meetingLink, title, duration, listingId } =
+      await req.json();
     if (
       !status ||
       !["pending", "accepted", "rejected", "expired"].includes(status)
@@ -62,7 +63,7 @@ export async function PATCH(
         requestId: request._id,
         instructorId: request.instructorId,
         learnerId: request.learnerId,
-        listingId: request.listingId,
+        listingId: listingId._id,
         title: title,
         scheduledFor: request.proposedDateTime,
         duration: duration,

@@ -5,6 +5,7 @@ import { apiPatch } from "@/utils/api";
 import { useUser } from "@clerk/nextjs";
 import { useStreamVideoClient } from "@stream-io/video-react-sdk";
 import { Loader2 } from "lucide-react";
+import { list } from "postcss";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 
@@ -42,19 +43,10 @@ const AcceptRequest = ({ request }: AcceptRequestProps) => {
   const client = useStreamVideoClient();
   const { user } = useUser();
 
-  console.log("Request Data:", request);
-  console.log("Listing ID:", request.listingId);
-  console.log("Title:", request.listingId?.title);
-  console.log("Duration:", request.listingId?.duration);
-
   const handleAccept = async () => {
     if (!client || !user) return;
     try {
       setIsLoading(true);
-      // const response = await apiPatch(`/api/requests/status/${id}`, {
-      //   status: "accepted",
-      // });
-
       // 1. Create GetStream call first
       const callId = crypto.randomUUID();
       const call = client.call("default", callId);
@@ -76,6 +68,7 @@ const AcceptRequest = ({ request }: AcceptRequestProps) => {
         meetingLink: `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${callId}`,
         title: request.listingId?.title,
         duration: request.listingId?.duration,
+        listingId: request.listingId,
       });
 
       if (response.error) {

@@ -5,7 +5,7 @@ import Session from "@/models/Session";
 import User from "@/models/User";
 import { auth } from "@clerk/nextjs/server";
 import { Request } from "@/models/Request";
-// import Listing from "@/models/Listing";
+import Listing from "@/models/Listing";
 
 export async function GET(req: Request) {
   try {
@@ -79,11 +79,11 @@ export async function GET(req: Request) {
             model: Request,
             select: "title description",
           },
-          //   {
-          //     path: "listingId",
-          //     model: Listing,
-          //     select: "title description",
-          //   },
+          {
+            path: "listingId",
+            model: Listing,
+            select: "title description",
+          },
         ])
         .sort({ scheduledFor: 1 }) // Sort by upcoming sessions
         .skip(skip)

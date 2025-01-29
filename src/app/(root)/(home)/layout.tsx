@@ -1,6 +1,5 @@
 import Navbar from "@/components/dashboardLayout/Navbar";
 import Sidebar from "@/components/dashboardLayout/Sidebar";
-import StreamVideoProvider from "@/providers/StreamClientProvider";
 import { ReactNode } from "react";
 
 const HomeLayout = ({ children }: { children: ReactNode }) => {
@@ -10,9 +9,7 @@ const HomeLayout = ({ children }: { children: ReactNode }) => {
       <div className="flex">
         <Sidebar />
         <section className="flex flex-col flex-1 min-h-screen px-6 pb-6 pt-28 max-md:pb-14 sm:px-14 bg-[#F6F8FE]">
-          <div className="full">
-            <StreamVideoProvider>{children}</StreamVideoProvider>
-          </div>
+          <div className="full">{children}</div>
         </section>
       </div>
     </main>
