@@ -5,6 +5,12 @@ import { apiGet } from "@/utils/api";
 import LoaderSpinner from "../ui/loader";
 import SessionCard from "./SessionCard";
 
+interface User {
+  _id: string;
+  username: string;
+  profileImageUrl: string;
+}
+
 interface Session {
   _id: string;
   title: string;
@@ -12,7 +18,10 @@ interface Session {
   duration: string;
   meetingLink: string;
   callId: string;
+  instructorId: User;
+  learnerId: User;
 }
+
 const Sessions = () => {
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
