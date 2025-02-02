@@ -38,10 +38,6 @@ const SessionSchema = new Schema(
       type: String,
       required: true,
     },
-    meetingLink: {
-      type: String,
-      required: true,
-    },
   },
   {
     timestamps: true,

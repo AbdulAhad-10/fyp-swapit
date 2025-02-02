@@ -25,8 +25,7 @@ export async function PATCH(
       );
     }
 
-    const { status, callId, meetingLink, title, duration, listingId } =
-      await req.json();
+    const { status, callId, title, duration, listingId } = await req.json();
     if (
       !status ||
       !["pending", "accepted", "rejected", "expired"].includes(status)
@@ -58,7 +57,7 @@ export async function PATCH(
     await request.save();
 
     // Create session if request is accepted
-    if (status === "accepted" && callId && meetingLink) {
+    if (status === "accepted" && callId) {
       const session = await Session.create({
         requestId: request._id,
         instructorId: request.instructorId,
@@ -68,7 +67,6 @@ export async function PATCH(
         scheduledFor: request.proposedDateTime,
         duration: duration,
         callId,
-        meetingLink,
       });
 
       return NextResponse.json({

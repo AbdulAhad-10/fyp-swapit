@@ -64,7 +64,6 @@ const AcceptRequest = ({ request }: AcceptRequestProps) => {
       const response = await apiPatch(`/api/requests/status/${request._id}`, {
         status: "accepted",
         callId,
-        meetingLink: `${process.env.NEXT_PUBLIC_BASE_URL}/meeting/${callId}`,
         title: request.listingId?.title,
         duration: request.listingId?.duration,
         listingId: request.listingId,
