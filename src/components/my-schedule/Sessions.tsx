@@ -16,7 +16,6 @@ interface Session {
   title: string;
   scheduledFor: string;
   duration: string;
-  meetingLink: string;
   callId: string;
   instructorId: User;
   learnerId: User;
