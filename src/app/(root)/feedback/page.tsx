@@ -77,6 +77,7 @@ export default function FeedbackPage() {
       router.push("/");
     } catch (err) {
       setError("Failed to submit feedback. Please try again.");
+      console.log("error", err);
     } finally {
       setIsSubmitting(false);
     }
