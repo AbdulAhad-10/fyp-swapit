@@ -38,6 +38,12 @@ const SessionSchema = new Schema(
       type: String,
       required: true,
     },
+    status: {
+      type: String,
+      enum: ["upcoming", "completed"],
+      default: "upcoming",
+      required: true,
+    },
   },
   {
     timestamps: true,

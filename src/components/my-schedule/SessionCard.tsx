@@ -103,7 +103,9 @@ const SessionCard = ({ session }: SessionCardProps) => {
           </div>
 
           <Button
-            onClick={() => router.push(`/meeting/${session.callId}`)}
+            onClick={() =>
+              router.push(`/meeting/${session.callId}?sessionId=${session._id}`)
+            }
             className="primary-btn hover:primary-btn w-full"
           >
             <Video className="h-4 w-4" />
