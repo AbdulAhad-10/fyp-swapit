@@ -21,6 +21,7 @@ import {
 } from "../ui/dropdown-menu";
 import EndCallButton from "./EndCallButton";
 import { LoaderSpinnerScreen } from "../ui/loader";
+import { apiPatch } from "@/utils/api";
 
 type CallLayoutType = "grid" | "speaker-left" | "speaker-right";
 
@@ -30,23 +31,60 @@ const MeetingRoom = () => {
   const router = useRouter();
   const [layout, setLayout] = useState<CallLayoutType>("speaker-left");
   const [showParticipants, setShowParticipants] = useState(false);
-  const { useCallCallingState } = useCallStateHooks();
+  const { useCallCallingState, useLocalParticipant } = useCallStateHooks();
   const call = useCall();
   const callingState = useCallCallingState();
+  const localParticipant = useLocalParticipant();
+  const sessionId = searchParams.get("sessionId");
+
+  const isInstructor =
+    localParticipant &&
+    call?.state.createdBy &&
+    localParticipant.userId === call?.state.createdBy.id;
+
+  const updateSessionStatus = async () => {
+    if (!sessionId) return;
+
+    const response = await apiPatch(`/api/sessions/status/${sessionId}`, {
+      status: "completed",
+    });
+
+    let fetchedListingId = null;
+    if (response?.data) {
+      fetchedListingId = response.data.updatedSession?.listingId;
+    }
+
+    if (response.error) {
+      console.error("Failed to update session status:", response.error);
+    }
+
+    return fetchedListingId;
+  };
+
+  const handleCallEnded = async () => {
+    // Get listingId before redirecting
+    const listingId = await updateSessionStatus();
+
+    if (isInstructor) {
+      router.push("/"); // Redirect instructor to home
+    } else {
+      // Only add listingId to URL if it's not null
+      const feedbackUrl = listingId
+        ? `/feedback?listingId=${listingId}`
+        : "/feedback";
+      router.push(feedbackUrl);
+    }
+  };
 
   useEffect(() => {
     if (!call) return;
-
-    const handleCallEnded = () => {
-      router.push("/");
-    };
 
     call.on("call.ended", handleCallEnded);
 
     return () => {
       call.off("call.ended", handleCallEnded);
     };
-  }, [call, router]);
+  }, [call, router, localParticipant]);
 
   if (callingState !== CallingState.JOINED) return <LoaderSpinnerScreen />;
 
@@ -74,7 +112,7 @@ const MeetingRoom = () => {
         )}
       </div>
       <div className="fixed bottom-0 flex flex-wrap items-center justify-center w-full gap-5">
-        <CallControls onLeave={() => router.push("/")} />
+        <CallControls onLeave={handleCallEnded} />
         <DropdownMenu>
           <div className="flex items-center">
             <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
