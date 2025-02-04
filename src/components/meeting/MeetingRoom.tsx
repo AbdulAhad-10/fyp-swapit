@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import {
-  CallControls,
+  // CallControls,
   CallParticipantsList,
   CallStatsButton,
   CallingState,
@@ -22,6 +22,7 @@ import {
 import EndCallButton from "./EndCallButton";
 import { LoaderSpinnerScreen } from "../ui/loader";
 import { apiPatch } from "@/utils/api";
+import { CallControls } from "./CallControls";
 
 type CallLayoutType = "grid" | "speaker-left" | "speaker-right";
 

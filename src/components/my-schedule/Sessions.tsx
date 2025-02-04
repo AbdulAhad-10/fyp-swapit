@@ -33,7 +33,7 @@ const Sessions = () => {
   const getSession = async () => {
     try {
       setLoading(true);
-      const response = await apiGet(`/api/sessions?status`);
+      const response = await apiGet(`/api/sessions?status=${status}`);
       setSessions(response?.data?.sessions);
     } catch (err) {
       setError("Failed to fetch sessions");
