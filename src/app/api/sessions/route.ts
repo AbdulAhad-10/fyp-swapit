@@ -36,6 +36,7 @@ export async function GET(req: Request) {
     const startDate = searchParams.get("startDate");
     const endDate = searchParams.get("endDate");
     const role = searchParams.get("role"); // 'instructor' or 'learner'
+    const status = searchParams.get("status"); // 'upcoming' or 'completed'
 
     // Build filter object
     const filter: mongoose.FilterQuery<typeof Session> = {};
@@ -51,6 +52,11 @@ export async function GET(req: Request) {
         { instructorId: currentUser._id },
         { learnerId: currentUser._id },
       ];
+    }
+
+    // Add status filtering
+    if (status) {
+      filter.status = status;
     }
 
     // Add date range filtering

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { apiGet } from "@/utils/api";
 import LoaderSpinner from "../ui/loader";
 import SessionCard from "./SessionCard";
+import { usePathname } from "next/navigation";
 
 interface User {
   _id: string;
@@ -25,11 +26,14 @@ const Sessions = () => {
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const pathname = usePathname();
+
+  const status = pathname === "/my-schedule" ? "upcoming" : "completed";
 
   const getSession = async () => {
     try {
       setLoading(true);
-      const response = await apiGet("/api/sessions");
+      const response = await apiGet(`/api/sessions?status`);
       setSessions(response?.data?.sessions);
     } catch (err) {
       setError("Failed to fetch sessions");
@@ -64,7 +68,7 @@ const Sessions = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {sessions.map((session: Session) => (
-            <SessionCard key={session._id} session={session} />
+            <SessionCard key={session._id} session={session} status={status} />
           ))}
         </div>
       )}
