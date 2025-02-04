@@ -22,6 +22,7 @@ interface Session {
 
 interface SessionCardProps {
   session: Session;
+  status: "upcoming" | "completed";
 }
 
 const formatDate = (dateString: string) => {
@@ -44,7 +45,7 @@ const getInitials = (username: string) => {
   return username.slice(0, 2).toUpperCase();
 };
 
-const SessionCard = ({ session }: SessionCardProps) => {
+const SessionCard = ({ session, status }: SessionCardProps) => {
   const router = useRouter();
 
   return (
@@ -102,15 +103,19 @@ const SessionCard = ({ session }: SessionCardProps) => {
             </div>
           </div>
 
-          <Button
-            onClick={() =>
-              router.push(`/meeting/${session.callId}?sessionId=${session._id}`)
-            }
-            className="primary-btn hover:primary-btn w-full"
-          >
-            <Video className="h-4 w-4" />
-            Join Meeting
-          </Button>
+          {status === "upcoming" && (
+            <Button
+              onClick={() =>
+                router.push(
+                  `/meeting/${session.callId}?sessionId=${session._id}`
+                )
+              }
+              className="primary-btn hover:primary-btn w-full"
+            >
+              <Video className="h-4 w-4" />
+              Join Meeting
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>
