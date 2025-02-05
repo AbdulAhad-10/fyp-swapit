@@ -4,6 +4,7 @@ import { apiGet } from "@/utils/api";
 import ListingCard from "./ListingCard";
 import { useEffect, useState } from "react";
 import LoaderSpinner from "../ui/loader";
+import { Inbox } from "lucide-react";
 
 interface Creator {
   _id: string;
@@ -34,6 +35,19 @@ interface ListingsResponse {
     totalListings: number;
   };
 }
+
+const EmptyState = () => (
+  <div className="flex flex-col items-center justify-center h-[70vh] text-center p-4">
+    <Inbox className="w-16 h-16 text-gray-400 mb-4" />
+    <h3 className="text-xl font-semibold text-gray-700 mb-2">
+      No Listings Available
+    </h3>
+    <p className="text-gray-500 max-w-md">
+      There are currently no listings available. Check back later for new
+      opportunities.
+    </p>
+  </div>
+);
 
 const Listings = () => {
   const [listings, setListings] = useState<Listing[]>([]);
@@ -75,6 +89,10 @@ const Listings = () => {
 
   if (error) {
     return <div className="text-center py-8 text-red-500">{error}</div>;
+  }
+
+  if (listings.length === 0) {
+    return <EmptyState />;
   }
 
   return (

@@ -59,11 +59,11 @@ const sidebarLinks = [
     route: "/previous",
     icon: <LucideCalendarCheck className="mr-2" size={20} />,
   },
-  {
-    label: "Recordings",
-    route: "/recordings",
-    icon: <FileVideo2Icon className="mr-2" size={20} />,
-  },
+  // {
+  //   label: "Recordings",
+  //   route: "/recordings",
+  //   icon: <FileVideo2Icon className="mr-2" size={20} />,
+  // },
   {
     label: "Profile",
     route: "/profile",

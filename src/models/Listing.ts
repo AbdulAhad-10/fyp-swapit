@@ -52,11 +52,59 @@ const ListingSchema = new mongoose.Schema(
       maxlength: 300,
       default: "",
     },
+    feedback: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        rating: {
+          type: Number,
+          required: true,
+          min: 1,
+          max: 5,
+        },
+        review: {
+          type: String,
+          trim: true,
+          maxlength: 500,
+          default: "",
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+    averageRating: {
+      type: Number,
+      default: 0,
+    },
+    totalRatings: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
   }
 );
+
+// Pre-save hook to calculate average rating
+ListingSchema.pre("save", function (this: any, next) {
+  if (this.feedback.length > 0) {
+    const totalRating = this.feedback.reduce(
+      (sum: any, item: { rating: any }) => sum + item.rating,
+      0
+    );
+    this.averageRating = parseFloat(
+      (totalRating / this.feedback.length).toFixed(1)
+    );
+    this.totalRatings = this.feedback.length;
+  }
+  next();
+});
 
 export default mongoose.models.Listing ||
   mongoose.model("Listing", ListingSchema);
