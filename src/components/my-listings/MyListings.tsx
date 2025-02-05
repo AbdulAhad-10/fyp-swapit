@@ -141,9 +141,7 @@ const MyListings = () => {
                 others
               </p>
               <Link href="/create-listing">
-                <Button className="bg-blue-600 hover:bg-blue-700">
-                  Create New Listing
-                </Button>
+                <Button className="primary-btn">Create New Listing</Button>
               </Link>
             </CardContent>
           </Card>

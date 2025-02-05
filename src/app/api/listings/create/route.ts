@@ -38,6 +38,9 @@ export async function POST(req: Request) {
       timeTo: listingData.timeTo,
       timezone: listingData.timezone,
       prerequisites: listingData.prerequisites || "",
+      feedback: [], // Initialize the feedback array
+      averageRating: 0,
+      totalRatings: 0,
     });
 
     // Save the listing

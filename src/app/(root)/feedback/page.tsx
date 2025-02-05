@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Star } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -15,11 +15,14 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { apiPost } from "@/utils/api";
 
 interface FeedbackData {
   rating: number;
-  review: string;
+  review?: string;
 }
+
+const MAX_REVIEW_LENGTH = 500;
 
 export default function FeedbackPage() {
   const [rating, setRating] = useState<number>(0);
@@ -28,6 +31,14 @@ export default function FeedbackPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string>("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const listingId = searchParams.get("listingId");
+
+  useEffect(() => {
+    if (!listingId) {
+      router.push("/");
+    }
+  }, [listingId, router]);
 
   useEffect(() => {
     // Prevent going back
@@ -39,7 +50,7 @@ export default function FeedbackPage() {
 
     // Prevent leaving the page
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (!rating || !review) {
+      if (!rating) {
         e.preventDefault();
         e.returnValue = "";
       }
@@ -50,9 +61,21 @@ export default function FeedbackPage() {
       window.removeEventListener("popstate", handlePopState);
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [rating, review]);
+  }, [rating]);
+
+  const handleReviewChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    if (value.length <= MAX_REVIEW_LENGTH) {
+      setReview(value);
+    }
+  };
 
   const handleSubmit = async () => {
+    if (!listingId) {
+      setError("Missing listing ID");
+      return;
+    }
+
     try {
       setError("");
 
@@ -61,23 +84,47 @@ export default function FeedbackPage() {
         return;
       }
 
+      if (review.length > MAX_REVIEW_LENGTH) {
+        setError(
+          `Review cannot be longer than ${MAX_REVIEW_LENGTH} characters`
+        );
+        return;
+      }
+
       setIsSubmitting(true);
 
       const feedbackData: FeedbackData = {
         rating,
-        review: review.trim(),
+        review,
       };
 
-      // Replace this with your actual API call
-      // await submitFeedback(feedbackData);
+      // Only include review if it's not empty
+      if (review.trim()) {
+        feedbackData.review = review.trim();
+      }
 
-      console.log("Feedback submitted:", feedbackData);
+      const { data, error: apiError } = await apiPost(
+        `/api/listings/${listingId}/feedback`,
+        feedbackData
+      );
+
+      if (apiError) {
+        throw new Error(apiError);
+      }
+
+      if (!data?.success) {
+        throw new Error(data?.message || "Failed to submit feedback");
+      }
 
       // After successful submission
       router.push("/");
     } catch (err) {
-      setError("Failed to submit feedback. Please try again.");
-      console.log("error", err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to submit feedback. Please try again."
+      );
+      console.error("Feedback submission error:", err);
     } finally {
       setIsSubmitting(false);
     }
@@ -107,6 +154,10 @@ export default function FeedbackPage() {
         );
       });
   };
+
+  if (!listingId) {
+    return null;
+  }
 
   return (
     <section className="min-h-screen flex items-center justify-center p-4">
@@ -142,16 +193,17 @@ export default function FeedbackPage() {
 
           <div className="space-y-2">
             <label className="text-sm font-medium">
-              Share your thoughts about the session
+              Share your thoughts about the session (optional)
             </label>
             <Textarea
               placeholder="What did you like? What could be improved?"
               className="min-h-[120px]"
               value={review}
-              onChange={(e) => setReview(e.target.value)}
+              onChange={handleReviewChange}
+              maxLength={MAX_REVIEW_LENGTH}
             />
-            <p className="text-sm text-muted-foreground">
-              Minimum 10 characters required
+            <p className="text-sm text-muted-foreground text-right">
+              {review.length}/{MAX_REVIEW_LENGTH}
             </p>
           </div>
 

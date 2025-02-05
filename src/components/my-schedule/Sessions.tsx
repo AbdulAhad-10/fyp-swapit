@@ -5,6 +5,7 @@ import { apiGet } from "@/utils/api";
 import LoaderSpinner from "../ui/loader";
 import SessionCard from "./SessionCard";
 import { usePathname } from "next/navigation";
+import { Calendar, CheckCircle } from "lucide-react";
 
 interface User {
   _id: string;
@@ -21,6 +22,28 @@ interface Session {
   instructorId: User;
   learnerId: User;
 }
+
+const EmptyState = ({ status }: { status: string }) => {
+  const isUpcoming = status === "upcoming";
+
+  return (
+    <div className="flex flex-col items-center justify-center h-[70vh] text-center p-4">
+      {isUpcoming ? (
+        <Calendar className="w-16 h-16 text-gray-400 mb-4" />
+      ) : (
+        <CheckCircle className="w-16 h-16 text-gray-400 mb-4" />
+      )}
+      <h3 className="text-xl font-semibold text-gray-700 mb-2">
+        {isUpcoming ? "No Upcoming Sessions" : "No Completed Sessions"}
+      </h3>
+      <p className="text-gray-500 max-w-md">
+        {isUpcoming
+          ? "You don't have any upcoming sessions scheduled. Browse available listings to book a new session."
+          : "You haven't completed any sessions yet. Your completed sessions will appear here."}
+      </p>
+    </div>
+  );
+};
 
 const Sessions = () => {
   const [sessions, setSessions] = useState([]);
@@ -59,19 +82,17 @@ const Sessions = () => {
     return <div className="text-center text-red-500 p-4">{error}</div>;
   }
 
+  if (sessions.length === 0) {
+    return <EmptyState status={status} />;
+  }
+
   return (
     <div className="container">
-      {sessions.length === 0 ? (
-        <div className="text-center text-gray-500 p-4">
-          No upcoming sessions found
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {sessions.map((session: Session) => (
-            <SessionCard key={session._id} session={session} status={status} />
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {sessions.map((session: Session) => (
+          <SessionCard key={session._id} session={session} status={status} />
+        ))}
+      </div>
     </div>
   );
 };
