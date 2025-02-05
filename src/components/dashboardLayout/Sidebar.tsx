@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import {
   BookOpen,
   CalendarClockIcon,
-  FileVideo2Icon,
+  // FileVideo2Icon,
   LayoutDashboard,
   LucideCalendarCheck,
   MessageSquare,
