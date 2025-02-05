@@ -92,10 +92,10 @@ const ListingSchema = new mongoose.Schema(
 );
 
 // Pre-save hook to calculate average rating
-ListingSchema.pre("save", function (this: any, next) {
+ListingSchema.pre("save", function (next) {
   if (this.feedback.length > 0) {
     const totalRating = this.feedback.reduce(
-      (sum: any, item: { rating: any }) => sum + item.rating,
+      (sum, item) => sum + item.rating,
       0
     );
     this.averageRating = parseFloat(
