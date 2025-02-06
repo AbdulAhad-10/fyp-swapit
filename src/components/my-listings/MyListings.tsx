@@ -1,30 +1,34 @@
 "use client";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Plus, ExternalLink, Calendar, Clock } from "lucide-react";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { apiGet } from "@/utils/api";
 import { useEffect, useState } from "react";
 import LoaderSpinner from "../ui/loader";
+import ListingCard from "../exploreSkills/ListingCard";
+
+interface Creator {
+  _id: string;
+  username: string;
+  profileImageUrl: string;
+}
 
 interface Listing {
   _id: string;
   title: string;
   description: string;
+  creator: Creator;
   category: string;
   duration: string;
-  language: string;
   availableDays: string[];
   timeFrom: string;
   timeTo: string;
   timezone: string;
+  language: string;
   prerequisites: string;
-  creator: {
-    _id: string;
-    username: string;
-    email: string;
-  };
+  averageRating: number;
+  totalRatings: number;
 }
 
 const MyListings = () => {
@@ -67,65 +71,7 @@ const MyListings = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {listings.map((listing) => (
-        <Card
-          key={listing._id}
-          className="border shadow-sm hover:shadow-md transition-shadow bg-white rounded-[8px] h-[350px] flex flex-col"
-        >
-          <CardContent className="p-6 flex-1 overflow-hidden">
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900 mb-2 line-clamp-1">
-                  {listing.title}
-                </h2>
-                <div className="flex gap-2 mb-4">
-                  <Badge className="px-2 py-0.5 bg-sky-1">
-                    {listing.language}
-                  </Badge>
-                  <Badge className="px-2 py-0.5 bg-sky-1">
-                    {listing.category}
-                  </Badge>
-                </div>
-              </div>
-            </div>
-
-            <p className="text-gray-600 mb-6 line-clamp-2">
-              {listing.description}
-            </p>
-
-            <div className="space-y-2 text-sm text-gray-600">
-              <div className="flex items-center gap-2">
-                <Clock className="w-4 h-4 flex-shrink-0" />
-                <span className="truncate">{listing.duration} minutes</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 flex-shrink-0" />
-                <span className="truncate">
-                  {listing.availableDays.join(", ")} ({listing.timeFrom} -{" "}
-                  {listing.timeTo} {listing.timezone})
-                </span>
-              </div>
-            </div>
-          </CardContent>
-
-          <CardFooter className="p-6 pt-0 flex gap-3">
-            {/* <Button variant="outline" className="flex-1" asChild>
-              <Link href={`/edit-listing/${listing._id}`}>
-                <Edit className="w-4 h-4 mr-2" />
-                Edit
-              </Link>
-            </Button> */}
-            <Button
-              variant="outline"
-              className="flex-1 primary-btn hover:primary-btn"
-              asChild
-            >
-              <Link href={`/my-listings/${listing._id}`}>
-                <ExternalLink className="w-4 h-4 mr-2" />
-                View
-              </Link>
-            </Button>
-          </CardFooter>
-        </Card>
+        <ListingCard key={listing._id} listing={listing} />
       ))}
 
       {listings.length === 0 && (

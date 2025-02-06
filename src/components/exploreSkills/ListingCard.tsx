@@ -9,6 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "../ui/tooltip";
+import { usePathname } from "next/navigation";
 
 interface Creator {
   _id: string;
@@ -38,6 +39,10 @@ interface ListingCardProps {
 }
 
 const ListingCard = ({ listing }: ListingCardProps) => {
+  const pathname = usePathname();
+
+  const isMyListing = pathname.startsWith("/my-listings") ? true : false;
+
   const formatAvailability = (
     days: string[],
     timeFrom: string,
@@ -91,10 +96,12 @@ const ListingCard = ({ listing }: ListingCardProps) => {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            <p className="text-sm text-gray-500 flex items-center gap-1">
-              <User className="w-4 h-4 flex-shrink-0" />
-              <span className="truncate">{listing.creator.username}</span>
-            </p>
+            {!isMyListing && (
+              <p className="text-sm text-gray-500 flex items-center gap-1">
+                <User className="w-4 h-4 flex-shrink-0" />
+                <span className="truncate">{listing.creator.username}</span>
+              </p>
+            )}
             {/* Add rating display here */}
             {renderRating(listing.averageRating, listing.totalRatings)}
           </div>

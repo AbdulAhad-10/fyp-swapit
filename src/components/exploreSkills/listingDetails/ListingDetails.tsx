@@ -8,8 +8,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useEffect, useState } from "react";
 import SessionRequestDialog from "../SessionRequestDialog";
 import { apiGet } from "@/utils/api";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import LoaderSpinner from "@/components/ui/loader";
+import { cn } from "@/lib/utils";
 
 interface Creator {
   _id: string;
@@ -128,6 +129,9 @@ const ListingDetails = () => {
   const listingId = params.id;
   const [showRequestDialog, setShowRequestDialog] = useState(false);
   const [listing, setListing] = useState<Listing | null>(null);
+  const pathname = usePathname();
+
+  const isMyListing = pathname.startsWith("/my-listings") ? true : false;
 
   const getListingDetails = async () => {
     try {
@@ -167,7 +171,11 @@ const ListingDetails = () => {
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-4 max-lg:grid-cols-1">
+      <div
+        className={cn(
+          !isMyListing && "grid grid-cols-3 gap-4 max-lg:grid-cols-1"
+        )}
+      >
         {/* Main Content */}
         <div className="col-span-2 space-y-4">
           {/* Title Section */}
@@ -284,76 +292,82 @@ const ListingDetails = () => {
         </div>
 
         {/* Sidebar */}
-        <div>
-          <Card className="sticky bg-white border shadow-sm top-8 rounded-[8px]">
-            <CardContent className="p-6 space-y-6">
-              <div className="flex items-start gap-4">
-                <Avatar className="w-16 h-16 border-2 border-gray-100">
-                  <AvatarImage src={listing.creator.profileImageUrl} />
-                  <AvatarFallback className="text-lg">
-                    {listing.creator.username.charAt(0).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900">
-                    {listing.creator.username}
-                  </h3>
-                  <p className="text-gray-600">
-                    {capitalizeWords(listing.category)} Mentor
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="p-4 rounded-lg bg-gray-50">
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <Clock className="w-4 h-4" />
-                    <span className="font-medium">{listing.duration} mins</span>
-                  </div>
-                </div>
-                <div className="p-4 rounded-lg bg-gray-50">
-                  <div className="flex items-center gap-2 text-gray-600">
-                    <MessagesSquare className="w-4 h-4" />
-                    <span className="font-medium">
-                      {capitalizeWords(listing.language)}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 text-gray-600">
-                  <Calendar className="flex-shrink-0 w-4 h-4" />
+        {!isMyListing && (
+          <div>
+            <Card className="sticky bg-white border shadow-sm top-8 rounded-[8px]">
+              <CardContent className="p-6 space-y-6">
+                <div className="flex items-start gap-4">
+                  <Avatar className="w-16 h-16 border-2 border-gray-100">
+                    <AvatarImage src={listing.creator.profileImageUrl} />
+                    <AvatarFallback className="text-lg">
+                      {listing.creator.username.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
                   <div>
-                    <p className="font-medium text-gray-900">
-                      Available Times:
-                    </p>
-                    <p>
-                      {listing.availableDays.join(", ")} ({listing.timeFrom} -{" "}
-                      {listing.timeTo} {listing.timezone})
+                    <h3 className="text-xl font-semibold text-gray-900">
+                      {listing.creator.username}
+                    </h3>
+                    <p className="text-gray-600">
+                      {capitalizeWords(listing.category)} Mentor
                     </p>
                   </div>
                 </div>
-              </div>
 
-              <Button
-                className="w-full primary-btn"
-                onClick={() => setShowRequestDialog(true)}
-              >
-                Request Session
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 rounded-lg bg-gray-50">
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <Clock className="w-4 h-4" />
+                      <span className="font-medium">
+                        {listing.duration} mins
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-4 rounded-lg bg-gray-50">
+                    <div className="flex items-center gap-2 text-gray-600">
+                      <MessagesSquare className="w-4 h-4" />
+                      <span className="font-medium">
+                        {capitalizeWords(listing.language)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Calendar className="flex-shrink-0 w-4 h-4" />
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        Available Times:
+                      </p>
+                      <p>
+                        {listing.availableDays.join(", ")} ({listing.timeFrom} -{" "}
+                        {listing.timeTo} {listing.timezone})
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <Button
+                  className="w-full primary-btn"
+                  onClick={() => setShowRequestDialog(true)}
+                >
+                  Request Session
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
 
-      <SessionRequestDialog
-        open={showRequestDialog}
-        onOpenChange={setShowRequestDialog}
-        duration={listing.duration}
-        creatorId={listing.creator._id}
-        listingId={listing._id}
-      />
+      {!isMyListing && (
+        <SessionRequestDialog
+          open={showRequestDialog}
+          onOpenChange={setShowRequestDialog}
+          duration={listing.duration}
+          creatorId={listing.creator._id}
+          listingId={listing._id}
+        />
+      )}
     </>
   );
 };
