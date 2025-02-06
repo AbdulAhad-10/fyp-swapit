@@ -1,61 +1,9 @@
 "use client";
 
+import { sidebarLinks } from "@/constants/sidebarLinks";
 import { cn } from "@/lib/utils";
-import {
-  BookOpen,
-  CalendarClockIcon,
-  // FileVideo2Icon,
-  LayoutDashboard,
-  LucideCalendarCheck,
-  MessageSquare,
-  Search,
-  User,
-} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-
-const sidebarLinks = [
-  {
-    label: "Dashboard",
-    route: "/",
-    icon: <LayoutDashboard className="mr-2" size={20} />,
-  },
-  {
-    label: "Explore Skills",
-    route: "/explore-skills",
-    icon: <Search className="mr-2" size={20} />,
-  },
-  {
-    label: "My Schedule",
-    route: "/my-schedule",
-    icon: <CalendarClockIcon className="mr-2" size={20} />,
-  },
-  {
-    label: "My Listings",
-    route: "/my-listings",
-    icon: <BookOpen className="mr-2" size={20} />,
-  },
-  {
-    label: "Requests",
-    route: "/requests",
-    icon: <MessageSquare className="mr-2" size={20} />,
-  },
-  {
-    label: "Previous",
-    route: "/previous",
-    icon: <LucideCalendarCheck className="mr-2" size={20} />,
-  },
-  // {
-  //   label: "Recordings",
-  //   route: "/recordings",
-  //   icon: <FileVideo2Icon className="mr-2" size={20} />,
-  // },
-  {
-    label: "Profile",
-    route: "/profile",
-    icon: <User className="mr-2" size={20} />,
-  },
-];
 
 const Sidebar = () => {
   const pathname = usePathname();
@@ -76,7 +24,7 @@ const Sidebar = () => {
                 }
               )}
             >
-              {link.icon}
+              <link.icon className="w-5 h-5" />
               <p className="text-base font-semibold max-lg:hidden">
                 {link.label}
               </p>
