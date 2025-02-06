@@ -1,4 +1,4 @@
-import MyListingDetails from "@/components/my-listings/MyListingDetails";
+import ListingDetails from "@/components/exploreSkills/listingDetails/ListingDetails";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
@@ -14,7 +14,7 @@ const MyListingDetailsPage = () => {
           <ChevronLeft className="w-4 h-4 mr-1" />
           Back to My Listings
         </Link>
-        <MyListingDetails />
+        <ListingDetails />
       </div>
     </main>
   );
