@@ -25,6 +25,8 @@ interface Listing {
   timezone: string;
   language: string;
   prerequisites: string;
+  averageRating: number;
+  totalRatings: number;
 }
 
 interface ListingsResponse {
