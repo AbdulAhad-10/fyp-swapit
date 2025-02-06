@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Star } from "lucide-react";
+import { Loader2, Star } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import {
@@ -212,7 +212,14 @@ export default function FeedbackPage() {
             onClick={handleSubmit}
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Submitting..." : "Submit Feedback"}
+            {isSubmitting ? (
+              <>
+                <Loader2 className="animate-spin mr-1" />
+                Submitting...
+              </>
+            ) : (
+              "Submit Feedback"
+            )}
           </Button>
         </CardContent>
       </Card>

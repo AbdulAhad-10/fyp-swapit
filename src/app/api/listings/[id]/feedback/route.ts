@@ -37,36 +37,46 @@ export async function POST(
       return NextResponse.json({ error: "Listing not found" }, { status: 404 });
     }
 
-    // Add the feedback
-    // listing.feedback.push({
-    //   user: user._id,
-    //   rating,
-    //   review,
-    //   createdAt: new Date(),
-    // });
-
-    // await listing.save();
-
-    // Instead of using push directly, use updateOne with $push
-    await Listing.updateOne(
-      { _id: params.id },
+    // Add feedback and update averages in one operation
+    await Listing.updateOne({ _id: params.id }, [
       {
-        $push: {
+        $set: {
           feedback: {
-            user: user._id,
-            rating,
-            review,
-            createdAt: new Date(),
+            $concatArrays: [
+              "$feedback",
+              [
+                {
+                  user: user._id,
+                  rating,
+                  review,
+                  createdAt: new Date(),
+                },
+              ],
+            ],
           },
         },
-      }
-    );
+      },
+      {
+        $set: {
+          averageRating: {
+            $round: [
+              {
+                $avg: "$feedback.rating",
+              },
+              1,
+            ],
+          },
+          totalRatings: { $size: "$feedback" },
+        },
+      },
+    ]);
 
     // After updating, fetch the updated listing to get the new averages
     const updatedListing = await Listing.findById(params.id);
 
     return NextResponse.json(
       {
+        success: true,
         message: "Feedback submitted successfully",
         averageRating: updatedListing.averageRating,
         totalRatings: updatedListing.totalRatings,
