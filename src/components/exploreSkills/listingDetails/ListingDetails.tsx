@@ -1,5 +1,5 @@
 "use client";
-import { Clock, MessagesSquare, Calendar } from "lucide-react";
+import { Clock, MessagesSquare, Calendar, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -17,6 +17,18 @@ interface Creator {
   profileImageUrl: string;
 }
 
+interface Review {
+  _id: string;
+  user: {
+    _id: string;
+    username: string;
+    profileImageUrl: string;
+  };
+  rating: number;
+  review: string;
+  createdAt: string;
+}
+
 interface Listing {
   _id: string;
   title: string;
@@ -32,7 +44,84 @@ interface Listing {
   creator: Creator;
   createdAt: string;
   updatedAt: string;
+  averageRating: number;
+  totalRatings: number;
+  feedback: Review[];
 }
+
+const RatingStars = ({ rating }: { rating: number }) => {
+  return (
+    <div className="flex">
+      {[1, 2, 3, 4, 5].map((star) => (
+        <Star
+          key={star}
+          className={`w-4 h-4 ${
+            star <= rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+          }`}
+        />
+      ))}
+    </div>
+  );
+};
+
+const ReviewsSection = ({
+  reviews,
+  averageRating,
+  totalRatings,
+}: {
+  reviews: Review[];
+  averageRating: number;
+  totalRatings: number;
+}) => {
+  if (!reviews || reviews.length === 0) {
+    return (
+      <div className="py-12 text-center">
+        <p className="text-lg text-gray-500">No reviews yet.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Overall Rating Summary */}
+      <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+        <div className="flex items-center gap-2">
+          <span className="text-2xl font-bold">{averageRating.toFixed(1)}</span>
+          <RatingStars rating={averageRating} />
+        </div>
+        <span className="text-gray-600">
+          ({totalRatings} {totalRatings === 1 ? "review" : "reviews"})
+        </span>
+      </div>
+
+      {/* Individual Reviews */}
+      <div className="space-y-6">
+        {reviews.map((review) => (
+          <div key={review._id} className="p-4 border rounded-lg">
+            <div className="flex items-center gap-3 mb-3">
+              <Avatar className="w-10 h-10 border">
+                <AvatarImage src={review.user.profileImageUrl} />
+                <AvatarFallback>
+                  {review.user.username.charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <h4 className="font-medium">{review.user.username}</h4>
+                <div className="flex items-center gap-2">
+                  <RatingStars rating={review.rating} />
+                  <span className="text-sm text-gray-500">
+                    {new Date(review.createdAt).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <p className="text-gray-600">{review.review}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const ListingDetails = () => {
   const params = useParams();
@@ -93,6 +182,13 @@ const ListingDetails = () => {
               <Badge variant="secondary" className="px-3 py-1 bg-sky-1">
                 {listing.language}
               </Badge>
+            </div>
+            <div className="flex items-center gap-2 mt-4">
+              <RatingStars rating={listing.averageRating} />
+              <span className="text-gray-600">
+                ({listing.totalRatings}{" "}
+                {listing.totalRatings === 1 ? "review" : "reviews"})
+              </span>
             </div>
             <p className="mt-4 leading-relaxed text-gray-600">
               {listing.description}
@@ -175,9 +271,11 @@ const ListingDetails = () => {
                   </TabsContent>
 
                   <TabsContent value="reviews" className="mt-0">
-                    <div className="py-12 text-center">
-                      <p className="text-lg text-gray-500">No reviews yet.</p>
-                    </div>
+                    <ReviewsSection
+                      reviews={listing.feedback}
+                      averageRating={listing.averageRating}
+                      totalRatings={listing.totalRatings}
+                    />
                   </TabsContent>
                 </div>
               </Tabs>
@@ -255,7 +353,6 @@ const ListingDetails = () => {
         duration={listing.duration}
         creatorId={listing.creator._id}
         listingId={listing._id}
-        // availableDays={listing.availableDays}
       />
     </>
   );

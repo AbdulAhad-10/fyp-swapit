@@ -28,6 +28,11 @@ export async function GET(
         model: User,
         select: "username profileImageUrl profile.bio", // Select only needed fields
       })
+      .populate({
+        path: "feedback.user",
+        model: User,
+        select: "username profileImageUrl profile.bio",
+      })
       .exec();
 
     if (!listing) {

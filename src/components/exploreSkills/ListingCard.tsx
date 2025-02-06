@@ -1,4 +1,4 @@
-import { Clock, User } from "lucide-react";
+import { Clock, User, Star } from "lucide-react";
 import { Card, CardContent, CardFooter, CardHeader } from "../ui/card";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
@@ -29,6 +29,8 @@ interface Listing {
   timezone: string;
   language: string;
   prerequisites: string;
+  averageRating: number;
+  totalRatings: number;
 }
 
 interface ListingCardProps {
@@ -48,6 +50,28 @@ const ListingCard = ({ listing }: ListingCardProps) => {
   const truncateText = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return `${text.slice(0, maxLength)}...`;
+  };
+
+  const renderRating = (rating: number, totalRatings: number) => {
+    return (
+      <div className="flex items-center gap-1.5">
+        <div className="flex">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Star
+              key={star}
+              className={`w-4 h-4 ${
+                star <= rating
+                  ? "text-yellow-400 fill-yellow-400"
+                  : "text-gray-300"
+              }`}
+            />
+          ))}
+        </div>
+        <span className="text-sm text-gray-500">
+          ({totalRatings} {totalRatings === 1 ? "review" : "reviews"})
+        </span>
+      </div>
+    );
   };
 
   return (
@@ -71,6 +95,8 @@ const ListingCard = ({ listing }: ListingCardProps) => {
               <User className="w-4 h-4 flex-shrink-0" />
               <span className="truncate">{listing.creator.username}</span>
             </p>
+            {/* Add rating display here */}
+            {renderRating(listing.averageRating, listing.totalRatings)}
           </div>
           <Badge className="bg-sky-1 flex-shrink-0">
             {truncateText(listing.category, 15)}
