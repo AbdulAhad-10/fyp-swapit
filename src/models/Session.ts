@@ -40,7 +40,7 @@ const SessionSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["upcoming", "completed"],
+      enum: ["upcoming", "completed", "expired"],
       default: "upcoming",
       required: true,
     },
