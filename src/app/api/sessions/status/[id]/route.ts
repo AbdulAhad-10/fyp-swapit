@@ -28,9 +28,14 @@ export async function PATCH(
 
     // Get status from request body
     const { status } = await req.json();
-    if (!status || !["upcoming", "completed"].includes(status)) {
+    const validStatuses = ["upcoming", "completed", "expired"];
+
+    if (!status || !validStatuses.includes(status)) {
       return NextResponse.json(
-        { error: "Invalid status. Must be either 'upcoming' or 'completed'" },
+        {
+          error:
+            "Invalid status. Must be either 'upcoming' or 'completed' or 'expired' ",
+        },
         { status: 400 }
       );
     }

@@ -4,6 +4,7 @@ import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useState, useEffect } from "react";
+import { apiPatch } from "@/utils/api";
 
 interface User {
   _id: string;
@@ -23,7 +24,7 @@ interface Session {
 
 interface SessionCardProps {
   session: Session;
-  status: "upcoming" | "completed";
+  status: "upcoming" | "completed" | "expired";
 }
 
 const SessionCard = ({ session, status }: SessionCardProps) => {
@@ -31,25 +32,44 @@ const SessionCard = ({ session, status }: SessionCardProps) => {
   const [canJoin, setCanJoin] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState<string>("");
 
-  // Function to check if the session can be joined
+  const updateSessionStatus = async () => {
+    const response = await apiPatch(`/api/sessions/status/${session._id}`, {
+      status: "expired",
+    });
+
+    if (response.error) {
+      console.error("Failed to update session status:", response.error);
+    }
+  };
+
   const checkSessionAvailability = () => {
     const now = new Date();
     const sessionTime = new Date(session.scheduledFor);
     const timeDiff = sessionTime.getTime() - now.getTime();
 
-    // Allow joining 5 minutes before scheduled time
+    // Can join from 5 minutes before until 30 minutes after
+    const earlyWindow = 5 * 60 * 1000; // 5 minutes in milliseconds
+    const lateWindow = 30 * 60 * 1000; // 30 minutes in milliseconds
+
     const canJoinTime =
-      timeDiff <= 5 * 60 * 1000 &&
-      timeDiff > -(parseInt(session.duration) * 60 * 1000);
+      timeDiff <= earlyWindow && // Within 5 minutes before
+      timeDiff > -lateWindow && // Within 15 minutes after
+      timeDiff > -(parseInt(session.duration) * 60 * 1000); // Not past session duration
+
     setCanJoin(canJoinTime);
 
-    // Calculate time remaining
+    // Update time remaining or late message
     if (timeDiff > 0) {
       const minutes = Math.floor(timeDiff / (1000 * 60));
       const hours = Math.floor(minutes / 60);
       setTimeRemaining(
         `Starts in ${hours > 0 ? `${hours}h ` : ""}${minutes % 60}m`
       );
+    } else if (timeDiff < -lateWindow) {
+      setTimeRemaining("Session expired");
+      updateSessionStatus();
+    } else {
+      setTimeRemaining("Join now");
     }
   };
 

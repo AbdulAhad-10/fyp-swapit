@@ -56,9 +56,13 @@ export async function GET(req: Request) {
 
     // Add status filtering
     if (status) {
-      filter.status = status;
+      if (status === "completed") {
+        // Include both completed and expired sessions
+        filter.status = { $in: ["completed", "expired"] };
+      } else {
+        filter.status = status;
+      }
     }
-
     // Add date range filtering
     if (startDate || endDate) {
       filter.scheduledFor = {};
