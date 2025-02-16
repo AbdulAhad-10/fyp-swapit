@@ -146,7 +146,7 @@ const ListingDetails = () => {
 
   useEffect(() => {
     getListingDetails();
-  }, [listingId, getListingDetails]);
+  }, [listingId]);
 
   if (!listing) {
     return (
