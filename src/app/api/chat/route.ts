@@ -9,7 +9,7 @@ const client = new OpenAI({
 });
 
 // Store conversation history with proper typing
-let conversationHistory: ChatCompletionMessageParam[] = [
+const conversationHistory: ChatCompletionMessageParam[] = [
   {
     role: "system",
     content:
