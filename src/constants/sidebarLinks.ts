@@ -47,8 +47,8 @@ export const sidebarLinks = [
   //   icon: FileVideo2Icon,
   // },
   {
-    label: "AI Mentor",
-    route: "/ai-mentor",
+    label: "Swapit AI",
+    route: "/swapit-ai",
     icon: BrainCircuit,
   },
   {

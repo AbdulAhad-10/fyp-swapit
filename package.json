@@ -10,8 +10,6 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^5.7.5",
-    "@livekit/components-react": "^2.8.1",
-    "@livekit/components-styles": "^1.1.4",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-dropdown-menu": "^2.1.5",
@@ -27,7 +25,6 @@
     "@stream-io/video-react-sdk": "^1.7.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
-    "livekit-server-sdk": "^2.9.7",
     "lucide-react": "^0.460.0",
     "mongodb": "^6.10.0",
     "mongoose": "^8.8.2",
