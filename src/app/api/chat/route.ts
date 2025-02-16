@@ -1,4 +1,3 @@
-//@typescript-eslint/no-explicit-any
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
@@ -44,8 +43,8 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ response: assistantResponse });
-  } catch (error: any) {
-    console.error("Error in SwapitAI chat API:", error.message);
+  } catch (error) {
+    console.error("Error in SwapitAI chat API:", error);
     return NextResponse.json(
       {
         error:
