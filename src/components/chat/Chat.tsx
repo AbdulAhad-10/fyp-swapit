@@ -8,17 +8,48 @@ interface Message {
   content: string;
 }
 
+interface SuggestedPrompt {
+  text: string;
+  description: string;
+}
+
 export default function Chat() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  const suggestedPrompts: SuggestedPrompt[] = [
+    {
+      text: "What are the most popular skills being shared on Swapit?",
+      description: "Explore trending skills",
+    },
+    {
+      text: "How do I schedule a skill exchange session?",
+      description: "Session scheduling",
+    },
+    {
+      text: "How do I create an effective skill listing as an instructor?",
+      description: "Create listing",
+    },
+    {
+      text: "What happens during and after a learning session?",
+      description: "Session flow",
+    },
+    {
+      text: "How do I find and request sessions for skills I want to learn?",
+      description: "Find sessions",
+    },
+    {
+      text: "What should I include in my session request note?",
+      description: "Request tips",
+    },
+  ];
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
 
-    // Add user message
     const userMessage: Message = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
@@ -35,7 +66,6 @@ export default function Chat() {
 
       const data = await response.json();
 
-      // Add assistant message
       const assistantMessage: Message = {
         role: "assistant",
         content: data.response,
@@ -55,24 +85,37 @@ export default function Chat() {
     }
   };
 
-  // Auto-scroll to bottom when messages change
+  const handlePromptClick = (prompt: string) => {
+    setInput(prompt);
+  };
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-[80vh] max-w-3xl mx-auto">
-      {/* <h1 className="text-2xl font-bold mb-4 text-blue-600">
-        SwapitAI Assistant
-      </h1> */}
-
+    <div className="flex flex-col h-[80vh] max-w-4xl mx-auto">
       <div className="flex-1 overflow-auto mb-4 border border-blue-200 rounded-[8px] p-4 bg-gray-50">
         {messages.length === 0 && (
           <div className="text-center text-gray-500 my-8">
-            <p>
-              Welcome to SwapitAI! Ask me about skill sharing, learning
-              opportunities, or how to connect with peers.
+            <p className="mb-4">
+              Welcome to SwapitAI! I can help you with learning, teaching, and
+              managing your skill exchange sessions.
             </p>
+            <div className="grid grid-cols-2 gap-3 max-w-xl mx-auto">
+              {suggestedPrompts.map((prompt, index) => (
+                <button
+                  key={index}
+                  onClick={() => handlePromptClick(prompt.text)}
+                  className="text-left p-3 rounded-[8px] border border-blue-100 bg-white hover:bg-blue-50 transition-colors"
+                >
+                  <p className="text-sm font-medium text-blue-600 mb-1">
+                    {prompt.description}
+                  </p>
+                  <p className="text-sm text-gray-600">{prompt.text}</p>
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
@@ -86,9 +129,49 @@ export default function Chat() {
             } max-w-[80%]`}
           >
             {msg.role === "assistant" ? (
-              <ReactMarkdown>{msg.content}</ReactMarkdown>
+              <ReactMarkdown
+                components={{
+                  // Style headers
+                  h3: ({ children }) => (
+                    <h3 className="text-lg font-semibold mb-2">{children}</h3>
+                  ),
+                  // Style bold text
+                  strong: ({ children }) => (
+                    <strong className="font-semibold">{children}</strong>
+                  ),
+                  // Style lists
+                  ul: ({ children }) => (
+                    <ul className="list-disc pl-4 my-2 space-y-1">
+                      {children}
+                    </ul>
+                  ),
+                  // Style list items
+                  li: ({ children }) => (
+                    <li className="text-gray-700">{children}</li>
+                  ),
+                  // Style horizontal rules
+                  hr: () => <hr className="my-3 border-blue-100" />,
+                  // Style paragraphs
+                  p: ({ children }) => (
+                    <p className="mb-2 last:mb-0">{children}</p>
+                  ),
+                  // Style code blocks
+                  code: ({ children }) => (
+                    <code className="px-1 py-0.5 bg-gray-100 rounded text-sm">
+                      {children}
+                    </code>
+                  ),
+                  // Style emojis to prevent them from being too large
+                  em: ({ children }) => (
+                    <span className="text-base">{children}</span>
+                  ),
+                }}
+                className="prose prose-blue max-w-none"
+              >
+                {msg.content}
+              </ReactMarkdown>
             ) : (
-              msg.content
+              <p className="text-gray-700">{msg.content}</p>
             )}
           </div>
         ))}
@@ -112,7 +195,7 @@ export default function Chat() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           className="flex-1 p-2 border border-blue-200 rounded-[8px] focus:outline-none focus:ring-2 focus:ring-blue-300"
-          placeholder="Ask about skill sharing, finding learning partners, or scheduling sessions..."
+          placeholder="Ask about learning, teaching, or managing your sessions..."
           disabled={isLoading}
         />
         <button
