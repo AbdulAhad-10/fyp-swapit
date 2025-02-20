@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import "react-datepicker/dist/react-datepicker.css";
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import { Providers } from "./providers";
+import { ProfileProvider } from "@/context/ProfileContext";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -37,7 +38,9 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
-          <Providers>{children}</Providers>
+          <ProfileProvider>
+            <Providers>{children}</Providers>
+          </ProfileProvider>
           <Toaster />
         </body>
       </html>
