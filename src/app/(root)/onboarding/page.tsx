@@ -126,8 +126,8 @@ export default function OnboardingPage() {
 
       router.push("/");
       router.refresh();
-    } catch (error: any) {
-      setError(error.message || "Something went wrong");
+    } catch (error) {
+      console.log("error", error);
       setIsSubmitting(false);
     }
   };
@@ -251,7 +251,8 @@ export default function OnboardingPage() {
                 </div>
                 {skillsCanTeach.length >= MIN_SKILLS && (
                   <p className="text-green-600 mt-3 text-sm">
-                    ✓ You've selected {skillsCanTeach.length} domains to teach
+                    ✓ You&apos;ve selected {skillsCanTeach.length} domains to
+                    teach
                   </p>
                 )}
                 <Button
@@ -310,7 +311,7 @@ export default function OnboardingPage() {
                 </div>
                 {skillsWantToLearn.length >= MIN_SKILLS && (
                   <p className="text-green-600 mt-3 text-sm">
-                    ✓ You've selected {skillsWantToLearn.length} domains to
+                    ✓ You&apos;ve selected {skillsWantToLearn.length} domains to
                     learn
                   </p>
                 )}
