@@ -114,8 +114,8 @@ export default function ProfilePage() {
       <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 p-4 rounded-md">
         <h2 className="text-lg font-semibold mb-2">Profile Not Found</h2>
         <p>
-          We couldn't find your profile information. You might need to complete
-          onboarding.
+          We couldn&apos;t find your profile information. You might need to
+          complete onboarding.
         </p>
         <Button
           className="mt-4"
