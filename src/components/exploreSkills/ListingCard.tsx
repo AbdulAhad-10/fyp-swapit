@@ -99,7 +99,7 @@ const ListingCard = ({ listing }: ListingCardProps) => {
             {!isMyListing && (
               <p className="text-sm text-gray-500 flex items-center gap-1">
                 <User className="w-4 h-4 flex-shrink-0" />
-                <span className="truncate">{listing.creator.username}</span>
+                <span className="truncate">{listing?.creator?.username}</span>
               </p>
             )}
             {/* Add rating display here */}
