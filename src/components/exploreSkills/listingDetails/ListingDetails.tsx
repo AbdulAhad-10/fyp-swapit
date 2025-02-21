@@ -298,14 +298,14 @@ const ListingDetails = () => {
               <CardContent className="p-6 space-y-6">
                 <div className="flex items-start gap-4">
                   <Avatar className="w-16 h-16 border-2 border-gray-100">
-                    <AvatarImage src={listing.creator.profileImageUrl} />
+                    <AvatarImage src={listing?.creator?.profileImageUrl} />
                     <AvatarFallback className="text-lg">
-                      {listing.creator.username.charAt(0).toUpperCase()}
+                      {listing?.creator?.username.charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div>
                     <h3 className="text-xl font-semibold text-gray-900">
-                      {listing.creator.username}
+                      {listing?.creator?.username}
                     </h3>
                     <p className="text-gray-600">
                       {capitalizeWords(listing.category)} Mentor
@@ -364,7 +364,7 @@ const ListingDetails = () => {
           open={showRequestDialog}
           onOpenChange={setShowRequestDialog}
           duration={listing.duration}
-          creatorId={listing.creator._id}
+          creatorId={listing?.creator?._id}
           listingId={listing._id}
         />
       )}

@@ -50,7 +50,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       success: true,
-      message: "Profile completed successfully",
+      message: "Profile updated successfully",
       data: updatedUser,
     });
   } catch (error) {
