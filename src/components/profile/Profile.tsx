@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Pencil } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import EditProfileModal from "./EditProfileModal";
-import { LoaderSpinnerScreen } from "../ui/loader";
+import LoaderSpinner from "../ui/loader";
 import Link from "next/link";
 import { apiGet, apiPost } from "@/utils/api";
 import { useToast } from "@/hooks/use-toast";
@@ -90,7 +90,11 @@ export default function ProfilePage() {
   };
 
   if (isLoading) {
-    return <LoaderSpinnerScreen />;
+    return (
+      <div className="flex items-center justify-center h-[70vh]">
+        <LoaderSpinner />
+      </div>
+    );
   }
 
   if (error) {
