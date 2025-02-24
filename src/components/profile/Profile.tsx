@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Pencil } from "lucide-react";
+import { Pencil, Plus } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import EditProfileModal from "./EditProfileModal";
 import LoaderSpinner from "../ui/loader";
@@ -137,7 +137,10 @@ export default function ProfilePage() {
         <h1 className="text-3xl font-bold">My Profile</h1>
         <div className="flex gap-3">
           <Link href="/create-listing">
-            <Button className="primary-btn">Create New Listing</Button>
+            <Button className="primary-btn">
+              <Plus className="w-4 h-4" />
+              Create New Listing
+            </Button>
           </Link>
           <Button
             variant="outline"
