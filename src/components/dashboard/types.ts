@@ -4,8 +4,28 @@ export interface SessionData {
   color: string;
 }
 
-export interface UpcomingSession {
+export interface User {
+  _id: string;
+  username: string;
+  profileImageUrl: string;
+}
+
+export interface Listing {
+  _id: string;
   title: string;
-  date: string;
-  type: "Learning" | "Teaching";
+  description: string;
+}
+
+export interface Session {
+  _id: string;
+  title: string;
+  scheduledFor: string;
+  status: string;
+  duration: string;
+  instructorId: User;
+  learnerId: User;
+  listingId: Listing;
+  callId: string;
+  createdAt: string;
+  updatedAt: string;
 }
