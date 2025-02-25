@@ -195,7 +195,7 @@ const CreateListingForm = () => {
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
       {/* Basic Information */}
-      <Card className="bg-white">
+      <Card className="bg-white rounded-[8px]">
         <CardHeader>
           <CardTitle>Basic Information</CardTitle>
         </CardHeader>
@@ -270,7 +270,7 @@ const CreateListingForm = () => {
       </Card>
 
       {/* Session Details */}
-      <Card className="bg-white">
+      <Card className="bg-white rounded-[8px]">
         <CardHeader>
           <CardTitle>Session Details</CardTitle>
         </CardHeader>
@@ -328,7 +328,7 @@ const CreateListingForm = () => {
       </Card>
 
       {/* Availability */}
-      <Card className="bg-white">
+      <Card className="bg-white rounded-[8px]">
         <CardHeader>
           <CardTitle>Availability</CardTitle>
         </CardHeader>
@@ -443,7 +443,7 @@ const CreateListingForm = () => {
       </Card>
 
       {/* Prerequisites & Materials */}
-      <Card className="bg-white">
+      <Card className="bg-white rounded-[8px]">
         <CardHeader>
           <CardTitle>Prerequisites</CardTitle>
         </CardHeader>
