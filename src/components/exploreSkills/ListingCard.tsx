@@ -143,7 +143,11 @@ const ListingCard = ({ listing }: ListingCardProps) => {
       <CardFooter className="flex-none">
         <Button className="w-full primary-btn">
           <Link
-            href={`/explore-skills/${listing._id}`}
+            href={
+              isMyListing
+                ? `/my-listings/${listing._id}`
+                : `/explore-skills/${listing._id}`
+            }
             className="w-full block text-center"
           >
             View Details
