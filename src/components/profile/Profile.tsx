@@ -9,16 +9,25 @@ import LoaderSpinner from "../ui/loader";
 import Link from "next/link";
 import { apiGet, apiPost } from "@/utils/api";
 import { useToast } from "@/hooks/use-toast";
+import Image from "next/image";
 
-// Define consistent interface for both components
-interface UserProfile {
+// Enhanced interface for user data
+interface UserData {
   _id: string;
   clerkId: string;
-  bio: string;
-  skills_can_teach: string[];
-  skills_wants_to_learn: string[];
+  username: string;
+  email: string;
+  profileImageUrl: string;
+  profile: {
+    bio: string;
+    skills_can_teach: string[];
+    skills_wants_to_learn: string[];
+    points: number;
+  };
+  profileCompleted: boolean;
   createdAt: string;
   updatedAt: string;
+  listingsCreated: string[];
 }
 
 // Simplified type for update operations
@@ -29,7 +38,7 @@ type ProfileUpdateData = {
 };
 
 export default function ProfilePage() {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [userData, setUserData] = useState<UserData | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -41,7 +50,7 @@ export default function ProfilePage() {
       try {
         setIsLoading(true);
         const { data } = await apiGet("/api/users");
-        setProfile(data?.profile);
+        setUserData(data);
         setError("");
       } catch (err) {
         console.error("Failed to fetch profile:", err);
@@ -58,24 +67,29 @@ export default function ProfilePage() {
     try {
       setIsSubmitting(true);
 
-      if (!profile) return;
+      if (!userData) return;
 
-      // Create updated profile by combining existing profile with updated fields
+      // Create updated profile
       const updatedProfile = {
-        ...profile,
+        ...userData.profile,
         bio: updatedFields.bio,
         skills_can_teach: updatedFields.skills_can_teach,
         skills_wants_to_learn: updatedFields.skills_wants_to_learn,
       };
 
       // Update local state
-      setProfile(updatedProfile);
+      setUserData({
+        ...userData,
+        profile: updatedProfile,
+      });
 
       // Send to API
-      const { data } = await apiPost(
-        "/api/users/profile/complete",
-        updatedProfile
-      );
+      const { data } = await apiPost("/api/users/profile/complete", {
+        bio: updatedFields.bio,
+        skills_can_teach: updatedFields.skills_can_teach,
+        skills_wants_to_learn: updatedFields.skills_wants_to_learn,
+      });
+
       if (data?.success) {
         toast({
           title: data.message,
@@ -113,7 +127,7 @@ export default function ProfilePage() {
     );
   }
 
-  if (!profile) {
+  if (!userData || !userData.profile) {
     return (
       <div className="bg-yellow-50 border border-yellow-200 text-yellow-700 p-4 rounded-md">
         <h2 className="text-lg font-semibold mb-2">Profile Not Found</h2>
@@ -130,6 +144,8 @@ export default function ProfilePage() {
       </div>
     );
   }
+
+  const { profile } = userData;
 
   return (
     <div>
@@ -152,6 +168,32 @@ export default function ProfilePage() {
           </Button>
         </div>
       </div>
+
+      {/* User Header with Profile Image and Username */}
+      <Card className="shadow-sm border-gray-200 bg-white rounded-[8px] mb-8">
+        <CardContent className="pt-6">
+          <div className="flex items-center gap-6">
+            <Image
+              width={96}
+              height={96}
+              src={userData.profileImageUrl}
+              alt={`${userData.username}'s profile`}
+              className="w-24 h-24 rounded-full object-cover border-2 border-gray-200"
+            />
+            <div>
+              <h2 className="text-2xl font-bold text-gray-800">
+                {userData.username}
+              </h2>
+              <p className="text-gray-500">{userData.email}</p>
+              <div className="mt-2">
+                <Badge className="ml-2 bg-blue-100 text-blue-800 border border-blue-200">
+                  {userData.listingsCreated?.length || 0} Listings
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="space-y-8">
         {/* Bio Section */}
@@ -176,7 +218,10 @@ export default function ProfilePage() {
             <CardContent>
               <div className="flex flex-wrap gap-2">
                 {profile.skills_can_teach.map((skill) => (
-                  <Badge key={skill} className="px-3 py-1 bg-sky-1 text-black">
+                  <Badge
+                    key={skill}
+                    className="px-3 py-1 bg-sky-100 text-sky-800 border border-sky-200"
+                  >
                     {skill}
                   </Badge>
                 ))}
