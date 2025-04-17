@@ -34,12 +34,18 @@ export async function GET(req: Request) {
     const category = searchParams.get("category") || "";
     const language = searchParams.get("language") || "";
 
+    const search = searchParams.get("search") || "";
+
     // Build filter object - exclude current user's listings
     const filter: mongoose.FilterQuery<typeof Listing> = {
       creator: { $ne: currentUser._id }, // Exclude listings where creator is the current user
     };
+
     if (category) filter.category = category;
     if (language) filter.language = language;
+    if (search) {
+      filter.$or = [{ title: { $regex: search, $options: "i" } }];
+    }
 
     // Try populating with explicit path and model
     const [listings, totalListings] = await Promise.all([
