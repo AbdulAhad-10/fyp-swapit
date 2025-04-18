@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/card";
 import { Session } from "./types";
 import { formatSessionDate } from "@/utils/formatDate";
+import Link from "next/link";
 
 interface UpcomingSessionsCardProps {
   sessions: Session[];
@@ -44,10 +45,21 @@ export const UpcomingSessionsCard: React.FC<UpcomingSessionsCardProps> = ({
   return (
     <Card className="bg-white rounded-[8px]">
       <CardHeader>
-        <CardTitle>Upcoming Sessions</CardTitle>
-        <CardDescription>
-          Your next learning and teaching sessions
-        </CardDescription>
+        <div className="flex lg:justify-between lg:items-center lg:flex-row flex-col gap-2">
+          <div className="flex flex-col gap-2">
+            <CardTitle>Upcoming Sessions</CardTitle>
+            <CardDescription>
+              Your next learning and teaching sessions
+            </CardDescription>
+          </div>
+
+          <Link
+            href={"/my-schedule"}
+            className="primary-btn px-4 py-2 text-center"
+          >
+            View All
+          </Link>
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
