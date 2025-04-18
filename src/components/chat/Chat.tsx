@@ -1,5 +1,6 @@
 "use client";
 
+import { Check, Copy } from "lucide-react";
 import React, { useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 
@@ -17,6 +18,7 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const suggestedPrompts: SuggestedPrompt[] = [
@@ -89,6 +91,13 @@ export default function Chat() {
     setInput(prompt);
   };
 
+  const copyToClipboard = (text: string, index: number) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 2000); // Reset copied state after 2 seconds
+    });
+  };
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -129,47 +138,68 @@ export default function Chat() {
             } max-w-[80%]`}
           >
             {msg.role === "assistant" ? (
-              <ReactMarkdown
-                components={{
-                  // Style headers
-                  h3: ({ children }) => (
-                    <h3 className="text-lg font-semibold mb-2">{children}</h3>
-                  ),
-                  // Style bold text
-                  strong: ({ children }) => (
-                    <strong className="font-semibold">{children}</strong>
-                  ),
-                  // Style lists
-                  ul: ({ children }) => (
-                    <ul className="list-disc pl-4 my-2 space-y-1">
-                      {children}
-                    </ul>
-                  ),
-                  // Style list items
-                  li: ({ children }) => (
-                    <li className="text-gray-700">{children}</li>
-                  ),
-                  // Style horizontal rules
-                  hr: () => <hr className="my-3 border-blue-100" />,
-                  // Style paragraphs
-                  p: ({ children }) => (
-                    <p className="mb-2 last:mb-0">{children}</p>
-                  ),
-                  // Style code blocks
-                  code: ({ children }) => (
-                    <code className="px-1 py-0.5 bg-gray-100 rounded text-sm">
-                      {children}
-                    </code>
-                  ),
-                  // Style emojis to prevent them from being too large
-                  em: ({ children }) => (
-                    <span className="text-base">{children}</span>
-                  ),
-                }}
-                className="prose prose-blue max-w-none"
-              >
-                {msg.content}
-              </ReactMarkdown>
+              <>
+                <ReactMarkdown
+                  components={{
+                    // Style headers
+                    h3: ({ children }) => (
+                      <h3 className="text-lg font-semibold mb-2">{children}</h3>
+                    ),
+                    // Style bold text
+                    strong: ({ children }) => (
+                      <strong className="font-semibold">{children}</strong>
+                    ),
+                    // Style lists
+                    ul: ({ children }) => (
+                      <ul className="list-disc pl-4 my-2 space-y-1">
+                        {children}
+                      </ul>
+                    ),
+                    // Style list items
+                    li: ({ children }) => (
+                      <li className="text-gray-700">{children}</li>
+                    ),
+                    // Style horizontal rules
+                    hr: () => <hr className="my-3 border-blue-100" />,
+                    // Style paragraphs
+                    p: ({ children }) => (
+                      <p className="mb-2 last:mb-0">{children}</p>
+                    ),
+                    // Style code blocks
+                    code: ({ children }) => (
+                      <code className="px-1 py-0.5 bg-gray-100 rounded text-sm">
+                        {children}
+                      </code>
+                    ),
+                    // Style emojis to prevent them from being too large
+                    em: ({ children }) => (
+                      <span className="text-base">{children}</span>
+                    ),
+                  }}
+                  className="prose prose-blue max-w-none"
+                >
+                  {msg.content}
+                </ReactMarkdown>
+                <div className="flex justify-end mb-1">
+                  <button
+                    onClick={() => copyToClipboard(msg.content, index)}
+                    className="text-xs text-gray-500 hover:text-blue-600 transition-colors"
+                    aria-label="Copy message"
+                  >
+                    {copiedIndex === index ? (
+                      <span className="flex items-center gap-1">
+                        <Check className="w-4 h-4 text-green-500" />
+                        Copied
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1">
+                        <Copy className="w-4 h-4" />
+                        Copy
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </>
             ) : (
               <p className="text-gray-700">{msg.content}</p>
             )}
