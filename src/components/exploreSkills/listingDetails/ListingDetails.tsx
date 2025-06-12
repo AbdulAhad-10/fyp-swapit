@@ -85,7 +85,7 @@ const ReviewsSection = ({
   return (
     <div className="space-y-6">
       {/* Overall Rating Summary */}
-      <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg">
+      <div className="flex items-center gap-4 p-4 rounded-lg bg-gray-50">
         <div className="flex items-center gap-2">
           <span className="text-2xl font-bold">{averageRating.toFixed(1)}</span>
           <RatingStars rating={averageRating} />
@@ -231,7 +231,7 @@ const ListingDetails = () => {
                 <div className="p-8">
                   <TabsContent value="overview" className="mt-0 space-y-6">
                     <div className="grid grid-cols-2 gap-6">
-                      <Card className="border-2 border-gray-100">
+                      <Card className="border-2 border-gray-100 bg-white rounded-[8px]">
                         <CardHeader>
                           <CardTitle className="text-lg font-semibold">
                             Prerequisites
@@ -244,7 +244,7 @@ const ListingDetails = () => {
                         </CardContent>
                       </Card>
 
-                      <Card className="border-2 border-gray-100">
+                      <Card className="border-2 border-gray-100 bg-white rounded-[8px]">
                         <CardHeader>
                           <CardTitle className="text-lg font-semibold">
                             Session Details
