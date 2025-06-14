@@ -32,7 +32,7 @@ export default function Dashboard() {
 
   // Filter out expired sessions
   const activeAndUpcomingSessions = sessions.filter(
-    (session) => session.status !== "expired"
+    (session) => session.status === "upcoming"
   );
 
   // Calculate session statistics
