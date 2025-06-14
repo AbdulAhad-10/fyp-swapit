@@ -65,7 +65,7 @@ const SessionCard = ({ session, status }: SessionCardProps) => {
       setTimeRemaining(
         `Starts in ${hours > 0 ? `${hours}h ` : ""}${minutes % 60}m`
       );
-    } else if (timeDiff < -lateWindow) {
+    } else if (timeDiff < -lateWindow && status === "upcoming") {
       setTimeRemaining("Session expired");
       updateSessionStatus();
     } else {
