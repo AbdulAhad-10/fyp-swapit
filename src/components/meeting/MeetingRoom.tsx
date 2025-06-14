@@ -214,6 +214,10 @@ const MeetingRoom = () => {
     }
   };
 
+  const handleCallEnded = () => {
+    router.push(`${!isPersonalRoom ? "/" : "/feedback"}`);
+  };
+
   return (
     <section className="relative w-full h-screen pt-4 overflow-hidden bg-black text-white">
       <div className="relative flex items-center justify-center size-full">
@@ -227,7 +231,7 @@ const MeetingRoom = () => {
         )}
       </div>
       <div className="fixed bottom-0 flex flex-wrap items-center justify-center w-full gap-5">
-        <CallControls onLeave={() => router.push("/")} />
+        <CallControls onLeave={handleCallEnded} />
         <DropdownMenu>
           <div className="flex items-center">
             <DropdownMenuTrigger className="cursor-pointer rounded-2xl bg-[#19232d] px-4 py-2 hover:bg-[#4c535b]">
