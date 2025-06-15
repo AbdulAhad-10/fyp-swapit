@@ -85,7 +85,7 @@ const ReviewsSection = ({
   return (
     <div className="space-y-6">
       {/* Overall Rating Summary */}
-      <div className="flex items-center gap-4 p-4 rounded-lg bg-gray-50">
+      <div className="flex items-center gap-4 p-4 rounded-[8px] bg-white">
         <div className="flex items-center gap-2">
           <span className="text-2xl font-bold">{averageRating.toFixed(1)}</span>
           <RatingStars rating={averageRating} />
@@ -98,7 +98,7 @@ const ReviewsSection = ({
       {/* Individual Reviews */}
       <div className="space-y-6">
         {reviews.map((review) => (
-          <div key={review._id} className="p-4 border rounded-lg">
+          <div key={review._id} className="p-4 border bg-white rounded-[8px]">
             <div className="flex items-center gap-3 mb-3">
               <Avatar className="w-10 h-10 border">
                 <AvatarImage src={review.user.profileImageUrl} />
