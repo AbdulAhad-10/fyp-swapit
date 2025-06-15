@@ -16,7 +16,7 @@ const LoaderSpinnerScreen = () => {
 
 const LoaderCard = () => {
   return (
-    <div className="w-full p-8 bg-white rounded-lg shadow-sm">
+    <div className="w-full p-8 bg-white rounded-[8px] shadow-sm">
       <div className="flex items-center justify-center space-x-3">
         <div className="w-8 h-8 border-3 border-sky-100 border-t-[#0056D2] rounded-full animate-spin" />
         <span className="text-lg font-medium text-gray-600">Loading...</span>

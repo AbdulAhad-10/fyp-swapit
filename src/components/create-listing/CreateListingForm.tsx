@@ -288,7 +288,7 @@ const CreateListingForm = () => {
               {[30, 45, 60, 90].map((mins) => (
                 <Label
                   key={mins}
-                  className={`flex items-center justify-center p-4 border rounded-lg cursor-pointer transition-all
+                  className={`flex items-center justify-center p-4 border rounded-[8px] cursor-pointer transition-all
                 ${
                   formData.duration === `${mins}`
                     ? "border-blue-1 bg-sky-1 text-blue-1"
