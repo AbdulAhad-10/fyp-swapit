@@ -53,7 +53,7 @@ const SessionCard = ({ session, status }: SessionCardProps) => {
 
     const canJoinTime =
       timeDiff <= earlyWindow && // Within 5 minutes before
-      timeDiff > -lateWindow && // Within 15 minutes after
+      timeDiff > -lateWindow && // Within 30 minutes after
       timeDiff > -(parseInt(session.duration) * 60 * 1000); // Not past session duration
 
     setCanJoin(canJoinTime);
@@ -107,11 +107,11 @@ const SessionCard = ({ session, status }: SessionCardProps) => {
       <CardContent>
         <div className="space-y-3">
           <div className="flex items-center gap-2 text-gray-600">
-            <Calendar className="h-4 w-4" />
+            <Calendar className="w-4 h-4" />
             <span>{formatDate(session.scheduledFor)}</span>
           </div>
           <div className="flex items-center gap-2 text-gray-600">
-            <Clock className="h-4 w-4" />
+            <Clock className="w-4 h-4" />
             <span>{formatTime(session.scheduledFor)}</span>
           </div>
           <div className="text-sm text-gray-500">
@@ -120,7 +120,7 @@ const SessionCard = ({ session, status }: SessionCardProps) => {
           <div className="flex items-center justify-between pt-2">
             <div className="flex items-center gap-4">
               <div className="flex flex-col items-center gap-1">
-                <Avatar className="h-8 w-8">
+                <Avatar className="w-8 h-8">
                   <AvatarImage
                     src={session.instructorId.profileImageUrl}
                     alt={session.instructorId.username}
@@ -132,7 +132,7 @@ const SessionCard = ({ session, status }: SessionCardProps) => {
                 <span className="text-xs text-gray-500">Instructor</span>
               </div>
               <div className="flex flex-col items-center gap-1">
-                <Avatar className="h-8 w-8">
+                <Avatar className="w-8 h-8">
                   <AvatarImage
                     src={session.learnerId.profileImageUrl}
                     alt={session.learnerId.username}
@@ -159,7 +159,7 @@ const SessionCard = ({ session, status }: SessionCardProps) => {
               }`}
               disabled={!canJoin}
             >
-              <Video className="h-4 w-4 mr-2" />
+              <Video className="w-4 h-4 mr-2" />
               {canJoin ? "Join Meeting" : timeRemaining}
             </Button>
           )}
