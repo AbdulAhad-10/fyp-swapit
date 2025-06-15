@@ -314,7 +314,7 @@ const ListingDetails = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 rounded-lg bg-gray-50">
+                  <div className="p-4 rounded-[8px] bg-gray-50">
                     <div className="flex items-center gap-2 text-gray-600">
                       <Clock className="w-4 h-4" />
                       <span className="font-medium">
@@ -322,7 +322,7 @@ const ListingDetails = () => {
                       </span>
                     </div>
                   </div>
-                  <div className="p-4 rounded-lg bg-gray-50">
+                  <div className="p-4 rounded-[8px] bg-gray-50">
                     <div className="flex items-center gap-2 text-gray-600">
                       <MessagesSquare className="w-4 h-4" />
                       <span className="font-medium">

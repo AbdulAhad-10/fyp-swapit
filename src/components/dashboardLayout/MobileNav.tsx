@@ -45,7 +45,7 @@ const MobileNav = () => {
                     <Link
                       href={link.route}
                       className={cn(
-                        "flex gap-4 items-center p-4 rounded-lg w-full max-w-60",
+                        "flex gap-4 items-center p-4 rounded-[8px] w-full max-w-60",
                         {
                           "bg-sky-1": isActive,
                         }
