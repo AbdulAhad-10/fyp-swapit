@@ -76,13 +76,8 @@ export const UpcomingSessionsCard: React.FC<UpcomingSessionsCardProps> = ({
                     {session.duration} minutes
                   </p>
                   <p>
-                    {session.instructorId.username === "abdulahad"
-                      ? "Teaching"
-                      : "Learning"}{" "}
-                    with{" "}
-                    {session.instructorId.username === "abdulahad"
-                      ? session.learnerId.username
-                      : session.instructorId.username}
+                    Instructor: {session.instructorId.username} • Learner:{" "}
+                    {session.learnerId.username}
                   </p>
                   <p className="capitalize">Status: {session.status}</p>
                 </div>
