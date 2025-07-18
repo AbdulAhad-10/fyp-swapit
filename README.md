@@ -17,9 +17,11 @@ Swapit is a real-time, peer-to-peer platform where users can exchange soft skill
 
     📝 Reviews & Ratings – Feedback system to maintain content quality.
 
-🛠 Tech Stack
-Layer	Description
-Frontend	Built with Next.js, TypeScript, TailwindCSS, and Shadcn for responsive, component-based UI.
-Backend	Powered by Next.js API Routes, handling authentication, session logic, and AI routing.
-Database	MongoDB stores users, skills, sessions, and feedback securely.
-AI	Integrated Conversational AI for topic-based assistance and user support.
+## 🛠 Tech Stack
+
+| **Layer**   | **Description**                                                                                     |
+|-------------|-----------------------------------------------------------------------------------------------------|
+| **Frontend** | Built with **Next.js**, **TypeScript**, **TailwindCSS**, and **Shadcn** for responsive, component-based UI. |
+| **Backend**  | Powered by **Next.js API Routes**, handling authentication, session logic, and AI routing.         |
+| **Database** | **MongoDB** stores users, skills, sessions, and feedback securely.                                 |
+| **AI**       | Integrated **Conversational AI** for topic-based assistance and user support.                      |
